@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.project.membership.model.mapper.MembershipMapper">
+   
+   <!-- 로그인(조회) -->
+   <select id="login" resultType="com.example.project.membership.model.dto.Member">
+	SELECT *
+   	FROM "MEMBER"
+   	WHERE MEMBER_EMAIL = #{inputMemberEmail}
+   	AND MEMBER_IS_OUT = 'N'
+   </select>
+   
+   <!-- 이메일 중복 검사 -->
+   <select id="countEmail" resultType="_int">
+   	SELECT COUNT(*)
+   	FROM "MEMBER"
+   	WHERE MEMBER_EMAIL = #{memberEmail}
+   	AND MEMBER_IS_OUT = 'N'
+   </select>
+   
+   <!-- 닉네임 중복 검사 -->
+   <select id="checkNickname">
+   	SELECT COUNT(*)
+   	FROM "MEMBER"
+   	WHERE MEMBER_NICKNAME = #{memberNickname}
+   	AND MEMBER_IS_OUT = 'N'
+   </select>
+   
+   <!-- 회원 가입 -->
+   <insert id="signup">
+   	INSERT INTO MEMBER (
+	  MEMBER_ID,
+	  MEMBER_NICKNAME,
+	  MEMBER_PW,
+	  MEMBER_EMAIL,
+	  MEMBER_PHONE,
+	  MEMBER_ADDRESS,
+	  MEMBER_ADDRESS_SUB,
+	  MEMBER_ADDRESS_POSTAL,
+	  MEMBER_DESCRIPTION,
+	  MEMBER_SIGN_DATE
+	) VALUES (
+	  SEQ_MEMBER_ID.NEXTVAL,
+	  #{memberNickname},
+	  #{memberPw},
+	  #{memberEmail},
+	  #{memberPhone},
+	  #{memberAddress},
+	  #{memberAddressSub},
+	  #{memberAddressPostal},
+	  #{memberDescription},
+	  SYSDATE
+	)
+   </insert>
+   
+   
+   
+   
+</mapper>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.project.membership.model.mapper.BoardMapper">
+   
+  <!-- =========================================================
+      ResultMap : MyBatis에서 제공하는 sql문 dto 객체 매핑규칙
+      
+      Write DTO와 연결되는 resultMap임.
+       ========================================================= -->
+  <resultMap id="writeMap" type="com.example.project.board.model.dto.Write">
+    <id     property="postId"      column="POST_ID"/>
+    <result property="postTitle"   column="POST_TITLE"/>
+    <result property="postContent" column="POST_CONTENT"/>
+    <result property="postDate"    column="POST_DATE"/>
+    <result property="memberId"    column="MEMBER_ID"/>
+    <result property="deletedAt"   column="DELETED_AT"/>
+  </resultMap>
+   
+  <!-- 게시글 전체 조회 (삭제되지 않은 글만)
+       - 최신글이 위로 오도록 정렬
+  -->
+  <select id="selectWriteList" resultMap="writeMap">
+    SELECT
+      POST_ID,
+      POST_TITLE,
+      POST_CONTENT,
+      POST_DATE,
+      MEMBER_ID,
+      DELETED_AT
+    FROM "WRITE"
+    WHERE DELETED_AT IS NULL
+    ORDER BY POST_DATE DESC
+  </select>
+    <!-- 게시글 등록
+       - POST_ID: 시퀀스 사용 가정 (SEQ_POST_ID.NEXTVAL)
+       - POST_DATE: SYSDATE
+  -->
+    <insert id="insertWrite" parameterType="com.example.project.board.model.dto.Write">
+    INSERT INTO "WRITE"
+    (
+      POST_ID,
+      POST_TITLE,
+      POST_CONTENT,
+      POST_DATE,
+      MEMBER_ID
+    )
+    VALUES
+    (
+      SEQ_POST_ID.NEXTVAL,
+      #{postTitle},
+      #{postContent},
+      SYSDATE,
+      #{memberId}
+    )
+  </insert>
+   
+  <!-- 게시글 수정 (삭제되지 않은 글만)
+       - 수정 시점 기록 컬럼이 없어서 POST_DATE는 건드리지 않음
+  -->
+  <update id="updateWrite" parameterType="com.example.project.board.model.dto.Write">
+    UPDATE "WRITE"
+    SET
+      POST_TITLE   = #{postTitle},
+      POST_CONTENT = #{postContent}
+    WHERE POST_ID = #{postId}
+      AND DELETED_AT IS NULL
+  </update>
+   
+  <!-- 게시글 소프트 삭제 -->
+  <update id="deleteWrite" parameterType="long">
+    UPDATE "WRITE"
+    SET
+      DELETED_AT = SYSDATE
+    WHERE POST_ID = #{postId}
+      AND DELETED_AT IS NULL
+  </update>
+   
+   
+   
+   
+</mapper>
