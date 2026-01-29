@@ -19,7 +19,7 @@
    </select>
    
    <!-- 닉네임 중복 검사 -->
-   <select id="checkNickname">
+   <select id="countNickname" resultType="_int">
    	SELECT COUNT(*)
    	FROM "MEMBER"
    	WHERE MEMBER_NICKNAME = #{memberNickname}

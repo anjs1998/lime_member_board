@@ -63,6 +63,7 @@ function isAllSubmitValid(){
 
     // 개별 input들
     const memberNickname = document.querySelector('input[name="memberNickname"]');
+    const memberNicknameChecker = document.getElementById("memberNicknameCheck");
     const memberEmail = document.querySelector('input[name="memberEmail"]');
     const memberPw = document.querySelector('input[name="memberPw"]');
     const memberPhone = document.querySelector('input[name="memberPhone"]');
@@ -70,7 +71,7 @@ function isAllSubmitValid(){
     const memberAddressSub = document.querySelector('input[name="memberAddressSub"]'); // 필수사항 아님
     const memberAddressPostal = document.querySelector('input[name="memberAddressPostal"]');
     const memberDescription = document.querySelector('input[name="memberDescription"]'); // 필수사항 아님
-
+    
     // 비밀번호 확인 (name이 없어서 위치로 잡음)
     const memberPwConfirm = document.querySelector(
     'input[name="memberPwConfirm"]'
@@ -93,7 +94,14 @@ function isAllSubmitValid(){
         memberNickname.focus();
         return false;
 
-    } else if (isInputEmpty(memberEmail)) {
+    }else if(isNicknameExists()){
+        alert("이미 존재하는 닉네임입니다!");
+        memberNickname.focus();
+        memberNicknameChecker.hidden = false;
+        memberNicknameChecker.textContent ="닉네임을 입력해주세요";
+        return false;
+    }
+     else if (isInputEmpty(memberEmail)) {
         alert("이메일을 입력하세요!");
         memberEmail.focus();
         return false;
@@ -157,8 +165,89 @@ function isAllSubmitValid(){
     // 모든 검증 통과
     return true;
 }
+/*닉네임 중복체크용 wrapper*/ 
+async function checkNicknameExists(){
+    const memberNickname = document.querySelector('input[name="memberNickname"]');
+    const memberNicknameChecker = document.getElementById("memberNicknameCheck");
+    let isExist;
+
+    if(memberNickname.value.trim() !== ""){//닉네임 입력 자체가 되지 않았을때
+        const result = await isNicknameExists();
+
+        if(result.isOk === true && result.isExist == true ){  
+            memberNicknameChecker.hidden = false; 
+            memberNicknameChecker.textContent ="이미 존재하는 닉네임입니다";
+        }
+        else if(result.isOk === true && result.isExist == false ){ 
+            memberNicknameChecker.hidden = false; 
+            memberNicknameChecker.textContent ="사용 가능한 닉네임입니다!";
+        }
+        else { // isOk === false
+            memberNicknameChecker.hidden = false;
+            memberNicknameChecker.textContent = result.message;
+        }
+    } else{//닉네임 입력 자체가 되지 않았을때
+        memberNicknameChecker.hidden = false;
+        memberNicknameChecker.textContent = "닉네임을 입력해주세요";
+        
+        
+    } 
+    
+    
+    
 
 
+}
+
+/*닉네임 중복체크*/
+async function isNicknameExists(){
+
+    
+    const memberNickname = document.querySelector('input[name="memberNickname"]');
+    
+
+
+    const fd = new FormData();
+    fd.append("memberNickname", memberNickname.value.trim());
+
+    try{
+        const resp = await $.ajax({
+            url : "/checkNickname",
+            type: "POST",
+            data: fd,
+            processData: false,
+            contentType: false,})
+
+
+        // resp가 boolean(false/true) 또는 문자열("false"/"true")일 수 있어서 처리
+        const result = (resp === true || resp === "true");
+
+        console.log(result);
+
+        if(result === true ){
+            return {isOk : true, isExist : true}; // 닉네임이 이미 존재함.
+
+        }else if(result === false ){
+            return {isOk : true, isExist : false}; // 존재하지 않는 새로운 닉네암
+        }else{
+
+            return {isOk : false, message : "check if the nickname input is empty!"};;// 닉네임이 비었거나 다른 오류가 생김.
+        }
+
+    }catch (xhr) {
+        
+        console.log("닉네임 중복검사 실패");
+        console.log(xhr.status);
+
+        return { isOk: false, message: `${xhr.status} ERROR` };
+    }
+
+        
+
+    
+    
+
+}
 /*이메일 중복체크 html용 wrapper*/
 async function checkEmailExists(){
     

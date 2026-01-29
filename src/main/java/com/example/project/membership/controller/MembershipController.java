@@ -111,10 +111,12 @@ public class MembershipController {
 	 * 이미 있는 닉네임이면 true, 닉네임이 없으면 false return
 	 * **/
 	@ResponseBody // 비동기 -> Response 할때 html이 아니라 json으로 
-	@GetMapping("checkNickname")
+	@PostMapping("checkNickname")
 	public boolean checkNicknameExists(@RequestParam("memberNickname") String memberNickname){
 		
-		return service.isNicknameExists(memberNickname);
+		boolean result = service.isNicknameExists(memberNickname);
+		log.debug("result: " + result);
+		return result;
 	}
 	
 	

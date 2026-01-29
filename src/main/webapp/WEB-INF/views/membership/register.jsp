@@ -56,7 +56,13 @@
                       class="form-control form-control-user"
                       placeholder="이름"
                       maxlength="10"
+                      onblur = "checkNicknameExists()"
                     />
+                    <small
+                      id="memberNicknameCheck"
+                      class="form-text"
+                      hidden
+                    ></small>
                   </div>
                   <div class="form-group row">
                     <div class="col-sm-9 mb-3 mb-sm-0">
@@ -66,7 +72,7 @@
                         name="memberEmail"
                         class="form-control form-control-user"
                         placeholder="이메일주소"
-                        
+                        autocomplete="off"
                       />
 
                     </div>
@@ -89,7 +95,7 @@
                         name="memberPw"
                         class="form-control form-control-user"
                         placeholder="비밀번호"
-
+                        autocomplete="off"
                       />
                       
                     </div>
@@ -203,7 +209,8 @@
                   // 도로명 주소
                   document.querySelector('input[name="memberAddress"]').value = data.roadAddress;
                   document.querySelector('input[name="memberAddressPostal"]').value = data.zonecode;
-                  //document.querySelector('input[name="memberAddressSub"]').value =  data.buildingName; // 상세주소에 빌딩 이름 입력
+                  console.log(data);
+                  document.querySelector('input[name="memberDescription"]').value =  data.buildingName; // 상세주소에 빌딩 이름 입력
                   
                 }
           }).open();
