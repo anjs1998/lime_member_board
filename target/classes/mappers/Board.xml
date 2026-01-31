@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.example.project.membership.model.mapper.BoardMapper">
+<mapper namespace="com.example.project.board.model.mapper.BoardMapper">
    
   <!-- =========================================================
       ResultMap : MyBatis에서 제공하는 sql문 dto 객체 매핑규칙
@@ -15,7 +15,13 @@
     <result property="memberId"    column="MEMBER_ID"/>
     <result property="deletedAt"   column="DELETED_AT"/>
   </resultMap>
-   
+	<!-- 게시글 수 조회 -->
+	<select id="getListCount">
+		SELECT COUNT(*)
+		FROM "WRITE" W
+		INNER JOIN MEMBER M ON W.MEMBER_ID = M.MEMBER_ID
+		WHERE W.DELETED_AT IS NULL
+	</select>
   <!-- 게시글 전체 조회 (삭제되지 않은 글만)
        - 최신글이 위로 오도록 정렬
   -->
@@ -35,6 +41,19 @@
        - POST_ID: 시퀀스 사용 가정 (SEQ_POST_ID.NEXTVAL)
        - POST_DATE: SYSDATE
   -->
+  	<select id="selectWriteById" resultType="com.example.project.board.model.dto.Write">
+  	SELECT
+      POST_ID,
+      POST_TITLE,
+      POST_CONTENT,
+      POST_DATE,
+      MEMBER_ID,
+      DELETED_AT
+    FROM "WRITE"
+    WHERE POST_ID = #{writeId}
+    AND DELETED_AT IS NULL
+  	</select>
+  	
     <insert id="insertWrite" parameterType="com.example.project.board.model.dto.Write">
     INSERT INTO "WRITE"
     (

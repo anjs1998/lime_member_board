@@ -62,5 +62,10 @@ public class BoardServiceImpl implements BoardService{
 		// 5. 결과 반환
 		return map;
 	}
+	@Override
+	public Write getBoardDetail(int writeId) {
+		// TODO Auto-generated method stub
+		return mapper.selectWriteById(writeId);
+	}
 
 }

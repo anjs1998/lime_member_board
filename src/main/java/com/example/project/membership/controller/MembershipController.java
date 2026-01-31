@@ -74,7 +74,8 @@ public class MembershipController {
 			HttpSession session = req.getSession(true); // ✅ 여기서 세션 먼저 확정 생성
 			session.setAttribute("loginMember", loginMember);
 			//이메일 저장용 쿠키
-			Cookie cookie = new Cookie("saveEmail", loginMember.getMemberEmail());
+			log.debug("saveEmail: ", saveEmail);
+			Cookie cookie = new Cookie("savedEmail", loginMember.getMemberEmail());
 			cookie.setPath("/"); // 쿠키가 사용될 경로 설정
 			
 			
@@ -101,11 +102,19 @@ public class MembershipController {
 	 * -> 브라우저가 request를 보낼떄마다 서버측에서 보내는 session id를 매번 첨부해서 보낸다. 
 	 * 이걸로 요청된 대상 세션 식별. 
 	 * **/
+	@ResponseBody // 비동기
 	@GetMapping("logout")
-	public String logout(SessionStatus status) {
+	public int logout(SessionStatus status) {
 		
-		status.setComplete();
-		return "redirect:/";
+		try {
+			status.setComplete();
+			return 1;
+		}catch(Exception e) {
+			log.debug("logout failed : " + e.getMessage());
+			return 0;
+		}
+		
+		
 	}
 	/**닉네임 중복체크
 	 * 이미 있는 닉네임이면 true, 닉네임이 없으면 false return

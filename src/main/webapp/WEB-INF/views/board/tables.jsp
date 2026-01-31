@@ -29,7 +29,7 @@
 
     <!-- Custom styles for this page -->
     <link
-      href="vendor/datatables/dataTables.bootstrap4.min.css"
+      href="/vendor/datatables/dataTables.bootstrap4.min.css"
       rel="stylesheet"
     />
     <script src="/js/board/boardList.js"></script>
@@ -271,7 +271,7 @@
             >
               Cancel
             </button>
-            <a class="btn btn-primary" href="login.html">Logout</a>
+            <a class="btn btn-primary" onclick = "logout()">Logout</a>
           </div>
         </div>
       </div>
@@ -293,5 +293,7 @@
 
     <!-- Page level custom scripts -->
     <script src="/js/demo/datatables-demo.js"></script>
+    <!-- login.js for logout-->
+    <script src="/js/membership/login.js"></script>
   </body>
 </html>

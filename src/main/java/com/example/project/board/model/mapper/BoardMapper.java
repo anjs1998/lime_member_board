@@ -14,6 +14,10 @@ public interface BoardMapper {
 
 	public List<Write> selectWriteList(RowBounds rowBounds);
 	
+	
+    /**게시글 불러오기 */
+	public Write selectWriteById(int writeId);
+	
     /** 게시글 등록 */
     int insertWrite(Write write);
 	
@@ -22,5 +26,6 @@ public interface BoardMapper {
 
     /** 게시글 소프트 삭제 (DELETED_AT 업데이트) */
     int deleteWrite(Long postId);
+
 
 }

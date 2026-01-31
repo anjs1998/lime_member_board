@@ -1,5 +1,17 @@
+
+
+window.addEventListener("DOMContentLoaded", () => {
+  const savedEmail = getCookie("savedEmail");
+  if (savedEmail) {
+    document.querySelector('input[name="username"]').value = savedEmail;
+    document.getElementById('emailRememberCheckBox').checked = true;
+  }
+});
+
 function login(){
+    
     const form = document.querySelector('form[name="login-form"]');
+    
     const formData = new FormData(form);
 
     $.ajax({
@@ -25,4 +37,39 @@ function login(){
       }
     });
 
+}
+
+function logout(){
+
+    $.ajax({
+      url: "/logout", // ✅ 너 컨트롤러 매핑에 맞춰서 변경
+      type: "GET",
+      
+      processData: false,
+      contentType: false,
+      success: function (resp) {
+        // 서버가 "1"/"0" 같은 텍스트를 준다고 가정
+        const result = Number(resp);
+
+        if (result === 1) {
+          alert("로그아웃 성공!");
+          location.href = "/"; // 메인으로
+        } else {
+          alert("로그아웃 failed");
+          
+        }
+      },
+      error: function (xhr) {
+        console.log(xhr.responseText);
+        alert("서버 요청 실패");
+      }
+    });
+
+
+}
+
+function getCookie(name) {
+  const parts = document.cookie.split("; ").map(v => v.split("="));
+  const found = parts.find(([k]) => k === name);
+  return found ? decodeURIComponent(found[1]) : null;
 }

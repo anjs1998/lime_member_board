@@ -1,3 +1,4 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -14,7 +15,7 @@
 
     <!-- Custom fonts for this template -->
     <link
-      href="vendor/fontawesome-free/css/all.min.css"
+      href="/vendor/fontawesome-free/css/all.min.css"
       rel="stylesheet"
       type="text/css"
     />
@@ -24,13 +25,15 @@
     />
 
     <!-- Custom styles for this template -->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet" />
 
     <!-- Custom styles for this page -->
     <link
-      href="vendor/datatables/dataTables.bootstrap4.min.css"
+      href="/vendor/datatables/dataTables.bootstrap4.min.css"
       rel="stylesheet"
     />
+
+    <script src="/js/board/boardDetail.js"></script>
   </head>
 
   <body id="page-top">
@@ -180,6 +183,7 @@
                 <div class="card shadow mb-4 h-100">
                   <div class="card-header py-3">
                     <h6
+                      id="detailTitle"
                       class="m-0 font-weight-bold text-primary btn float-left"
                     >
                       test 제목
@@ -200,6 +204,7 @@
                     </button>
                   </div>
                   <div
+                    id="detailBody"
                     class="card-body navbar-nav-scroll"
                     style="height: 290px !important"
                   >
@@ -498,27 +503,30 @@
             >
               Cancel
             </button>
-            <a class="btn btn-primary" href="login.html">Logout</a>
+            <a class="btn btn-primary"  onclick = "logout()">Logout</a>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="/js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/datatables-demo.js"></script>
+    <script src="/js/demo/datatables-demo.js"></script>
+
+    <!-- login.js for logout-->
+    <script src="/js/membership/login.js"></script>
   </body>
 </html>

@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function loadWriteList() {
-  const tbody = document.getElementById("writeTbody");
+  const tbody = document.getElementById("boardTbody");
   
 
   // 1) 로딩 UI
@@ -19,11 +19,10 @@ async function loadWriteList() {
     type: "GET",
     dataType: "json", // ✅ resp를 JSON 객체/배열로 받게 함
 
-    success: function (boardList) {
+    success: function ([{ writeList, pagination }]) {
 
-      
     // 데이터 없을 때
-    if (!boardList || boardList.length === 0) {
+    if (!writeList || writeList.length === 0) {
       tbody.innerHTML = `
         <tr>
           <td colspan="4" class="text-center">게시글이 없습니다.</td>
@@ -32,23 +31,24 @@ async function loadWriteList() {
       return;
     }else{
         // tbody 렌더링
-        tbody.innerHTML = boardList.map(row => {
+        tbody.innerHTML = writeList.map(row => {
         // 서버에서 내려주는 키 이름에 맞추면 됨
         // (예시) nickname, postId, postTitle, postDate, commentCount
-        const nickname = escapeHtml(row.nickname ?? "익명");
-        const title = escapeHtml(row.postTitle ?? "(제목 없음)");
+        const nickname = row.nickname ?? "익명";
+        const title = row.postTitle ?? "(제목 없음)";
         const postId = row.postId; // 숫자라 가정
         const commentCount = row.commentCount ?? 0;
 
         // 날짜 포맷: "2026-01-26T09:10:00" 또는 "2026-01-26" 등 들어올 수 있음
-        const dateText = formatDate(row.postDate);
-
+        const dateText =  new Date(row.postDate).toLocaleDateString("ko-KR");
+        
+        
         return `
           <tr>
             <td>${nickname}</td>
             <td><a href="/write/detail?postId=${postId}">${title}</a></td>
             <td>${dateText}</td>
-            <td>${commentCount}개</td>
+            <td>${commentCount}</td>
           </tr>
         `;
       }).join("");

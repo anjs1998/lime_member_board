@@ -66,8 +66,10 @@
                           <input
                             type="checkbox"
                             class="custom-control-input"
+                            name="save-username"
+                            id="emailRememberCheckBox"
                           />
-                          <label class="custom-control-label" for="">Remember Me</label>
+                          <label class="custom-control-label" for="emailRememberCheckBox">Remember Me</label>
                         </div>
                       </div>
                       <a
