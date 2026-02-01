@@ -19,7 +19,7 @@
 	<select id="getListCount">
 		SELECT COUNT(*)
 		FROM "WRITE" W
-		INNER JOIN MEMBER M ON W.MEMBER_ID = M.MEMBER_ID
+		LEFT JOIN MEMBER M ON W.MEMBER_ID = M.MEMBER_ID<!-- OUTER로 이미 존재하지 않는 MEMBER_ID까지 조회할수 있도록.-->
 		WHERE W.DELETED_AT IS NULL
 	</select>
   <!-- 게시글 전체 조회 (삭제되지 않은 글만)

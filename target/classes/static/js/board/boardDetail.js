@@ -33,33 +33,27 @@ async function loadWriteDetail(){
 
 
 
-
-
-
-
-
 async function getWriteDetail(postId){
 
     const detail = $.ajax({
         url: "/boardDetail",
         type: "GET",
         dataType: "json",
-        data : {postId:postId}
-    }).then(writeDto => {
+        data : {postId:postId},
+    }).then((dto) => {
         return{
-            writeId: writeDto.postId,
-            writeTitle: writeDto.postTitle,
-            writeContent: writeDto.postContent,
-            writeDate: writeDto.postDate,
-            memberId: writeDto.memberId,
+            writeId: dto.postId,
+            writeTitle: dto.postTitle,
+            writeContent: dto.postContent,
+            writeDate: dto.postDate,
+            memberId: dto.memberId,
         }
-
-    })
+    });
         /*
         error: function(xhr){
             console.log(xhr.responseText);
             alert("서버 요청 실패 : 글을 불러오지 못했습니다.");
 
         }*/
-       return detail;
+    return detail;
 }

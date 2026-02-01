@@ -86,15 +86,15 @@ function isAllSubmitValid(){
     //우편번호 체크용 정규식
     const postalRegex = /^\d{5}$/;
     
+    const nickname = isNicknameExists();
     
-
     // 개별 input들의 empty check
     if (isInputEmpty(memberNickname)) {
         alert("이름을 입력하세요!");
         memberNickname.focus();
         return false;
 
-    }else if(isNicknameExists()){
+    }else if(nickname.isExist){
         alert("이미 존재하는 닉네임입니다!");
         memberNickname.focus();
         memberNicknameChecker.hidden = false;

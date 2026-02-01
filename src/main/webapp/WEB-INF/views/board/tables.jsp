@@ -33,6 +33,7 @@
       rel="stylesheet"
     />
     <script src="/js/board/boardList.js"></script>
+    <script src="/js/board/pagination.js"></script>
   </head>
 
   <body id="page-top">
@@ -203,7 +204,7 @@
                     </thead>
                     <tbody id="boardTbody"></tbody>
                   </table>
-                  <a href="write.html"
+                  <a href="/write/new"
                     ><button
                       type="button"
                       class="btn btn-primary btn float-right"
@@ -211,6 +212,11 @@
                       게시글 작성
                     </button></a
                   >
+                </div>
+                <div class="col-sm-12 col-md-7">
+                  <nav aria-label="Page navigation">
+                    <ul id="pagination" class="pagination justify-content-end mb-0"></ul>
+                  </nav>
                 </div>
               </div>
             </div>

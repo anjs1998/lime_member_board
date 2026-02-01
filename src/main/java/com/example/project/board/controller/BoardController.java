@@ -29,7 +29,11 @@ public class BoardController {
     }
 	@GetMapping("/write/detail")
 	public String boardDetail(@RequestParam("postId") int postId) {
-        return "board/detail"; // /WEB-INF/views/board/tables.jsp 렌더링
+        return "board/detail"; 
+    }
+	@GetMapping("/write/new")
+	public String boardWriteNew() {
+        return "board/write"; // /WEB-INF/views/board/tables.jsp 렌더링
     }
 	
 	/**게시글 목록 불러오기
