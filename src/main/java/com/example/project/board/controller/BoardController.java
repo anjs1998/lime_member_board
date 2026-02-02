@@ -8,11 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.project.board.model.dto.Write;
 import com.example.project.board.model.service.BoardService;
+import com.example.project.membership.model.dto.Member;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,7 +38,12 @@ public class BoardController {
     }
 	@GetMapping("/write/new")
 	public String boardWriteNew() {
-        return "board/write"; // /WEB-INF/views/board/tables.jsp 렌더링
+        return "board/write"; 
+    }
+	
+	@GetMapping("/write/modify")
+	public String boardWriteModify() {
+        return "board/modify"; 
     }
 	
 	/**게시글 목록 불러오기
@@ -59,10 +69,70 @@ public class BoardController {
 	 * */
 	@ResponseBody
 	@GetMapping("/boardDetail")
-	public Write getBoardDetail(@RequestParam(value="postId", required = true) int writeId) {
+	public Map<String, Object> getBoardDetail(@RequestParam(value="postId", required = true) long writeId,
+			@SessionAttribute(name="loginMember", required=false) Member loginMember) {
 		
 		
-		Write result = service.getBoardDetail(writeId);
+		Write writeDto = service.getBoardDetail(writeId);
+		boolean isOwner = (loginMember != null && loginMember.getMemberId() == writeDto.getMemberId());
+		return Map.of(
+		        "write", writeDto,
+		        "isOwner", isOwner
+		    );
+		
+	}
+	
+	/**새 게시글 작성
+	 * 
+	 * @param inputWrite : 새로 작성한 게시글 dto
+	 * @param loginMember 
+	 * @param files
+	 * @return 작성된 게시글의 번호 반환. 0을 반환시 실패로 간주.
+	 * */
+	@ResponseBody
+	@PostMapping("/board/insert")
+	public int insertBoardDetail(@RequestParam(value="title", required = true) String title, @RequestParam(value="content", required=true) String content,
+			@SessionAttribute("loginMember") Member loginMember,
+			@RequestParam("uploadFiles") List<MultipartFile> files) throws Exception{
+		 
+		Write inputWrite = new Write();
+		inputWrite.setPostTitle(title);
+		inputWrite.setPostContent(content);
+		inputWrite.setMemberId(loginMember.getMemberId());
+		//inputBoard.setMemberNo(loginMember.getMemberNo());
+		
+		int boardNo = service.insertBoardDetail(inputWrite, files);
+		
+		
+		return boardNo;
+		
+	}
+	/**게시글 수정
+	 * 
+	 * @param inputWrite : 새로 작성한 게시글 dto
+	 * @param loginMember 
+	 * @param files
+	 * @return 작성된 게시글의 번호 반환. 0을 반환시 실패로 간주.
+	 * */
+	@ResponseBody
+	@PostMapping("/modify")
+	public int modifyBoardDetail(@ModelAttribute Write inputWrite,
+			@SessionAttribute("loginMember") Member member,
+			@RequestParam("images") List<MultipartFile> images) throws Exception{
+		
+		//inputBoard.setMemberNo(loginMember.getMemberNo());
+		int boardNo = service.insertBoardDetail(inputWrite, images);
+		
+		
+		return boardNo;
+		
+	}
+	
+	@ResponseBody
+	@PostMapping("/delete")
+	public int deleteBoardDetail(@RequestParam(value="postId", required = true) long writeId) {
+		
+		int result = service.deleteBoardDetail(writeId);
 		
 		return result;
 		

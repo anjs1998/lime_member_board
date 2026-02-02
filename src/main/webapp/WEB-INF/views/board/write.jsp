@@ -179,21 +179,24 @@
             <div class="card shadow mb-4 h-75">
               <div class="card-body">
                 <!-- Basic Card Example -->
-                <form action="#" method="post" class="h-100">
+                <form id = "submitWrite" action="#" method="post" enctype="multipart/form-data" class="h-100">
                   <div class="card shadow mb-4 h-100">
                     <div class="card-header py-3">
                       <div class="col-sm-11 float-left">
                         <input
                           type="text"
                           id="a1"
+                          name="title"
                           class="form-control"
                           placeholder="제목"
+                          maxlength="4000"
                         />
                       </div>
-                      <a href="tables.html">
+                      <a >
                         <button
                           type="button"
                           class="btn btn-primary btn float-right ml-1"
+                          onclick="submitNewWrite()"
                         >
                           작성완료
                         </button></a
@@ -202,13 +205,18 @@
                     <div class="card-body h-100">
                       <textarea
                         id="a3"
+                        name="content"
                         cols="30"
                         class="form-control h-100"
                         placeholder="내용
                         "
                         style="resize: none"
+                        maxlength="4000"
                       ></textarea>
                     </div>
+                  </div>
+                  <div>
+                    <input type="file" name="uploadFiles" multiple>
                   </div>
                 </form>
               </div>
@@ -292,5 +300,8 @@
 
     <!-- Page level custom scripts -->
     <script src="/js/demo/datatables-demo.js"></script>
+
+    <!-- for submitting new Post-->
+    <script src="/js/board/boardWrite.js"></script>
   </body>
 </html>

@@ -186,20 +186,22 @@
                       id="detailTitle"
                       class="m-0 font-weight-bold text-primary btn float-left"
                     >
-                      test 제목
+                      글 제목 로딩중...
                     </h6>
-                    <a href="modify.html">
+                    <a href="modify.html" class="owner-only" hidden>
                       <button
+                        name="modify-post-button"
                         type="button"
-                        class="btn btn-primary btn float-right ml-1"
-                      >
+                        class="btn btn-primary btn float-right ml-1 owner-only"
+                      hidden>
                         수정
                       </button>
                     </a>
                     <button
+                      name="delete-post-button"
                       type="button"
-                      class="btn btn-danger btn float-right"
-                    >
+                      class="btn btn-danger btn float-right owner-only"
+                    hidden>
                       삭제
                     </button>
                   </div>
@@ -208,57 +210,7 @@
                     class="card-body navbar-nav-scroll"
                     style="height: 290px !important"
                   >
-                    The styling for this basic card example is created by using
-                    default Bootstrap utility classes. By using utility classes,
-                    the style of the card component can be easily modified with
-                    no need for any custom CSS! The styling for this basic card
-                    example is created by using default Bootstrap utility
-                    classes. By using utility classes, the style of the card
-                    component can be easily modified with no need for any custom
-                    CSS! The styling for this basic card example is created by
-                    using default Bootstrap utility classes. By using utility
-                    classes, the style of the card component can be easily
-                    modified with no need for any custom CSS! The styling for
-                    this basic card example is created by using default
-                    Bootstrap utility classes. By using utility classes, the
-                    style of the card component can be easily modified with no
-                    need for any custom CSS! The styling for this basic card
-                    example is created by using default Bootstrap utility
-                    classes. By using utility classes,lt Bootstrap utility
-                    classes. By using utility classes, the style of the card
-                    component can be easily modified with no need for any custom
-                    CSS! The styling for this basic card example is created by
-                    using default Bootstrap utility classes. By using utility
-                    classes, the style of the card component can be easily
-                    modified with no need for any custom CSS! The styling forlt
-                    Bootstrap utility classes. By using utility classes, the
-                    style of the card component can be easily modified with no
-                    need for any custom CSS! The styling for this basic card
-                    example is created by using default Bootstrap utility
-                    classes. By using utility classes, the style of the card
-                    component can be easily modified with no need for any custom
-                    CSS! The styling for the style of the card component can be
-                    easily modified with no need for any custom CSS! The styling
-                    for this basic card example is created by using default
-                    Bootstrap utility classes. By using utility classes, the
-                    style of the card component can be easily modified with no
-                    need for any custom CSS! The styling for this basic card
-                    example is created by using default Bootstrap utility
-                    classes. By using utility classes, the style of the card
-                    component can be easily modified with no need for any custom
-                    CSS! The styling for this basic card example is created by
-                    using default Bootstrap utility classes. By using utility
-                    classes, the style of the card component can be easily
-                    modified with no need for any custom CSS! The styling for
-                    this basic card example is created by using default
-                    Bootstrap utility classes. By using utility classes, the
-                    style of the card component can be easily modified with no
-                    need for any custom CSS! The styling for this basic card
-                    example is created by using default Bootstrap utility
-                    classes. By using utility classes, the style of the card
-                    component can be easily modified with no need for any custom
-                    CSS! Bootstrap utility classes. By using utility classes,
-                    the
+                    글 본문내용 로딩중...
                   </div>
 				  <div class="card-body fileUpLoad">
                  <label class="fileUpLoadBtn">파일</label>

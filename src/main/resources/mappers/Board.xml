@@ -86,7 +86,7 @@
   </update>
    
   <!-- 게시글 소프트 삭제 -->
-  <update id="deleteWrite" parameterType="long">
+  <update id="deleteWriteById" parameterType="long">
     UPDATE "WRITE"
     SET
       DELETED_AT = SYSDATE
