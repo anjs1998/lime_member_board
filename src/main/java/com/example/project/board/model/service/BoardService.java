@@ -14,8 +14,8 @@ public interface BoardService {
 
 	Write getBoardDetail(long writeId);
 
-	int deleteBoardDetail(long writeId);
+	long deleteBoardDetail(long writeId);
 
-	int insertBoardDetail(Write inputWrite, List<MultipartFile> images);
+	long insertBoardDetail(Write inputWrite, List<MultipartFile> images) throws Exception;
 
 }

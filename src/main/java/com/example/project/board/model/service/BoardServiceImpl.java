@@ -1,5 +1,8 @@
 package com.example.project.board.model.service;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,10 +33,10 @@ public class BoardServiceImpl implements BoardService{
 	
 	
 	
-	@Value("${my.board.web-path}")
+	@Value("${file.web-path}")
 	private String webPath; // /images/board/
 	
-	@Value("${my.board.folder-path}")
+	@Value("${file.folder-path}")
 	private String folderPath; // C:/uploadFiles/board/
 	
 
@@ -85,10 +88,10 @@ public class BoardServiceImpl implements BoardService{
 	}
 	
 	@Override
-	public long insertBoardDetail(Write inputWrite, List<MultipartFile> files) {
+	public long insertBoardDetail(Write inputWrite, List<MultipartFile> files) throws Exception {
 		// 1. 제목, 본문 삽입 -> newWriteCount 에 삽입된 게시글 개수 return 
 		
-		int newWriteCount = mapper.insertWrite(inputWrite);
+		int newWriteCount = mapper.insertWrite(inputWrite); //Mybatis 내부 <selectkey>로 inputWrite 내부에 primary key값 자동주입.
 		if(newWriteCount == 0) {
 			return 0l;
 		}
@@ -107,10 +110,11 @@ public class BoardServiceImpl implements BoardService{
 						.fileNameOriginal(originalName)
 						.fileNameSaved(rename)
 						.path(rename)
-						.postId(i)
+						.postId(inputWriteId)
+						.uploadFile(files.get(i))
 						.build();
 				uploadList.add(file);
-				
+				log.debug("file inputWriteId: "+file.getPostId());
 				
 			}
 		}
@@ -122,7 +126,7 @@ public class BoardServiceImpl implements BoardService{
 		// -> "BOARD_IMG" 테이블에 insert + 서버에 파일 저장
 		
 		// result == 삽입된 행의 개수 == uploadList.size()
-		int result = mapper.insertFiles(uploadList);
+		int result = mapper.insertFiles(inputWriteId, uploadList);
 		
 		//if(newWriteCount > =0) {newPostId = mapper.insertFiles(, files);}
 		/*		// 삽입 실패 시
@@ -135,7 +139,9 @@ public class BoardServiceImpl implements BoardService{
 			
 			// todo : 서버에 파일 저장
 			for(WriteFile file : uploadList) {
-				//file.getUploadFile().transferTo(new File(folderPath + img.getImgRename()));
+				Path savePath = Paths.get(folderPath, file.getFileNameSaved());
+				
+				file.getUploadFile().transferTo(savePath.toFile());
 			}
 			
 		} else {
@@ -153,7 +159,7 @@ public class BoardServiceImpl implements BoardService{
 	}
 	
 	@Override
-	public int deleteBoardDetail(long writeId) {
+	public long deleteBoardDetail(long writeId) {
 		// TODO Auto-generated method stub
 		return mapper.deleteWriteById(writeId);
 	}

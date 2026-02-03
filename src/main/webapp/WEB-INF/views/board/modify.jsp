@@ -1,3 +1,4 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -14,7 +15,7 @@
 
     <!-- Custom fonts for this template -->
     <link
-      href="vendor/fontawesome-free/css/all.min.css"
+      href="/vendor/fontawesome-free/css/all.min.css"
       rel="stylesheet"
       type="text/css"
     />
@@ -24,11 +25,11 @@
     />
 
     <!-- Custom styles for this template -->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet" />
 
     <!-- Custom styles for this page -->
     <link
-      href="vendor/datatables/dataTables.bootstrap4.min.css"
+      href="/vendor/datatables/dataTables.bootstrap4.min.css"
       rel="stylesheet"
     />
   </head>
@@ -178,16 +179,19 @@
             <div class="card shadow mb-4 h-75">
               <div class="card-body">
                 <!-- Basic Card Example -->
-                <form action="#" method="post" class="h-100">
+                <form  id = "submitModify" action="#" method="post" enctype="multipart/form-data" class="h-100">
                   <div class="card shadow mb-4 h-100">
                     <div class="card-header py-3">
                       <div class="col-sm-11 float-left">
+                        <input id="postId" name="postId" hidden>
                         <input
                           type="text"
                           id="a1"
+                          name="title"
                           class="form-control"
                           placeholder="제목"
                           value="test 제목"
+                          maxlength="4000"
                         />
                       </div>
                       <a href="tables.html">
@@ -202,11 +206,13 @@
                     <div class="card-body h-100">
                       <textarea
                         id="a3"
+                        name="content"
                         cols="30"
                         class="form-control h-100"
                         placeholder="내용
                         "
                         style="resize: none"
+                        maxlength="4000"
                       >
 The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS!</textarea
                       >
@@ -279,20 +285,20 @@ The styling for this basic card example is created by using default Bootstrap ut
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="/js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/datatables-demo.js"></script>
+    <script src="/js/demo/datatables-demo.js"></script>
   </body>
 </html>

@@ -188,7 +188,7 @@
                     >
                       글 제목 로딩중...
                     </h6>
-                    <a href="modify.html" class="owner-only" hidden>
+                    <a href="/write/modify" class="owner-only" hidden>
                       <button
                         name="modify-post-button"
                         type="button"

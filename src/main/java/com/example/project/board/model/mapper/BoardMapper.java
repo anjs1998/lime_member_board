@@ -3,8 +3,8 @@ package com.example.project.board.model.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.example.project.board.model.dto.Write;
 import com.example.project.board.model.dto.WriteFile;
@@ -29,7 +29,9 @@ public interface BoardMapper {
     /** 게시글 소프트 삭제 (DELETED_AT 업데이트) */
 	int deleteWriteById(long writeId);
 
-	public void insertFiles(List<WriteFile> uploadList);
+	int insertFiles(@Param("postId") long postId,
+            @Param("uploadList") List<WriteFile> uploadList);
+	
 
 	
 

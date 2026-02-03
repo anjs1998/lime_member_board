@@ -91,7 +91,9 @@ public class BoardController {
 	 * */
 	@ResponseBody
 	@PostMapping("/board/insert")
-	public int insertBoardDetail(@RequestParam(value="title", required = true) String title, @RequestParam(value="content", required=true) String content,
+	public long insertBoardDetail(
+			@RequestParam(value="title", required = true) String title, 
+			@RequestParam(value="content", required=true) String content,
 			@SessionAttribute("loginMember") Member loginMember,
 			@RequestParam("uploadFiles") List<MultipartFile> files) throws Exception{
 		 
@@ -101,7 +103,7 @@ public class BoardController {
 		inputWrite.setMemberId(loginMember.getMemberId());
 		//inputBoard.setMemberNo(loginMember.getMemberNo());
 		
-		int boardNo = service.insertBoardDetail(inputWrite, files);
+		long boardNo = service.insertBoardDetail(inputWrite, files);
 		
 		
 		return boardNo;
@@ -115,13 +117,24 @@ public class BoardController {
 	 * @return 작성된 게시글의 번호 반환. 0을 반환시 실패로 간주.
 	 * */
 	@ResponseBody
-	@PostMapping("/modify")
-	public int modifyBoardDetail(@ModelAttribute Write inputWrite,
-			@SessionAttribute("loginMember") Member member,
+	@PostMapping("/board/modify")
+	public long modifyBoardDetail(
+			@RequestParam(value="postId", required = true) String postIdString, 
+			@RequestParam(value="title", required = true) String title, 
+			@RequestParam(value="content", required=true) String content,
+			@SessionAttribute("loginMember") Member loginMember,
 			@RequestParam("images") List<MultipartFile> images) throws Exception{
 		
+		
+		Write inputWrite = new Write();
+		
+		long postId = Long.parseLong(postIdString); // String -> Long 형변환
+		inputWrite.setPostId(postId);
+		inputWrite.setPostTitle(title);
+		inputWrite.setPostContent(content);
+		inputWrite.setMemberId(loginMember.getMemberId());
 		//inputBoard.setMemberNo(loginMember.getMemberNo());
-		int boardNo = service.insertBoardDetail(inputWrite, images);
+		long boardNo = service.insertBoardDetail(inputWrite, images);
 		
 		
 		return boardNo;
@@ -130,9 +143,9 @@ public class BoardController {
 	
 	@ResponseBody
 	@PostMapping("/delete")
-	public int deleteBoardDetail(@RequestParam(value="postId", required = true) long writeId) {
+	public long deleteBoardDetail(@RequestParam(value="postId", required = true) long writeId) {
 		
-		int result = service.deleteBoardDetail(writeId);
+		long result = service.deleteBoardDetail(writeId);
 		
 		return result;
 		
