@@ -15,6 +15,15 @@
     <result property="memberId"    column="MEMBER_ID"/>
     <result property="deletedAt"   column="DELETED_AT"/>
   </resultMap>
+  
+  <resultMap id="writeFileMap" type="com.example.project.board.model.dto.WriteFile">
+	<id property="fileId" column="FILE_ID"/>
+    <result property="postId" column="POST_ID"/>
+    <result property="path" column="PATH"/>
+    <result property="fileNameOriginal" column="FILE_NAME_ORIGINAL"/>
+    <result property="fileNameSaved" column="FILE_NAME_SAVED"/>
+    <result property="dateSaved" column="DATE_SAVED"/>
+  </resultMap>
 	<!-- 게시글 수 조회 -->
 	<select id="getListCount">
 		SELECT COUNT(*)
@@ -81,6 +90,18 @@
 	      #{memberId}
 	    )
   </insert>
+  <select id="selectFiles" parameterType = "long" resultMap = "writeFileMap">
+  
+  	    SELECT
+        FILE_ID,
+        POST_ID,
+        PATH,
+        FILE_NAME_ORIGINAL,
+        FILE_NAME_SAVED,
+        DATE_SAVED
+    FROM WRITE_FILE
+    WHERE POST_ID = #{postId}
+  </select>
   <!--파일 등록.-->
   <insert id="insertFiles"
 	        parameterType="java.util.List">

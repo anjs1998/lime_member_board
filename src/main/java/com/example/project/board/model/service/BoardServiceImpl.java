@@ -81,16 +81,29 @@ public class BoardServiceImpl implements BoardService{
 		// 5. 결과 반환
 		return map;
 	}
+	/**글의 Write dto로 제목 불러오기. (***주의*** : 글에 첨부된 file들은 아래의 별도 함수로 불러와야함.) */
 	@Override
 	public Write getBoardDetail(long writeId) {
 		// TODO Auto-generated method stub
 		return mapper.selectWriteById(writeId);
 	}
 	
+	/**글에 딸린 첨부파일 조회. 향후 기능 확장을 위해 List<WriteFile>을 다시 Map으로 감쌈.*/
+	@Override
+	public Map<String, Object> selectWriteFilesByWriteId(long writeId) {
+		// TODO Auto-generated method stub
+		List<WriteFile> files = mapper.selectFiles(writeId);
+		Map<String, Object> map = new HashMap<>();
+		
+		map.put("files", files);
+		
+		return map;
+	}
+
 	@Override
 	public long insertBoardDetail(Write inputWrite, List<MultipartFile> files) throws Exception {
 		// 1. 제목, 본문 삽입 -> newWriteCount 에 삽입된 게시글 개수 return 
-		
+
 		int newWriteCount = mapper.insertWrite(inputWrite); //Mybatis 내부 <selectkey>로 inputWrite 내부에 primary key값 자동주입.
 		if(newWriteCount == 0) {
 			return 0l;

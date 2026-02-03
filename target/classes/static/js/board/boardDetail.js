@@ -1,9 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   // 일단 수정/삭제 버튼 숨기기.
-    document.querySelectorAll(".owner-only").forEach(el => {
-        el.hidden = true;                // display:none과 비슷한 효과
-        el.style.display = "none";       // Bootstrap 등 영향 방지용(확실하게)
-    });
+    
     loadWriteDetail();
 });
 
@@ -12,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function loadWriteDetail(){
     const detailTitle = document.getElementById("detailTitle");
     const detailBody = document.getElementById("detailBody");
-
+    //todo : 첨부파일 표시하는 태그 얻어와서 첨부파일 표시 처리.
 
     const detailModifyBtn = document.querySelector('button[name="modify-post-button"]'); // 글 수정 버튼
     const detailDeleteBtn = document.querySelector('button[name="delete-post-button"]'); // 글 삭제 버튼
@@ -25,16 +22,18 @@ async function loadWriteDetail(){
             writeTitle, 
             writeContent, 
             writeDate, 
-            memberId, isOwner}  = await getWriteDetail(postId);
+            memberId, uploadFiles, isOwner}  = await getWriteDetail(postId);
         
         detailTitle.textContent = writeTitle;
         detailBody.textContent = writeContent;
-    
+        
+        renderUploadFiles(uploadFiles);
          // 내가 쓴 글이면 "DOMContentLoaded"때 숨긴 수정/삭제 버튼 다시 표시
         if (isOwner) {
             document.querySelectorAll(".owner-only").forEach(el => {
             el.hidden = false;
             el.style.display = ""; // 원래 상태로(버튼은 inline-block, a는 inline 등)
+            el.removeAttribute("hidden"); 
             });
         }
 
@@ -50,7 +49,33 @@ async function loadWriteDetail(){
 }
 
 
+function renderUploadFiles(files) {
+  const container = document.getElementById("fileName");
 
+  // 초기화
+  container.innerHTML = "";
+
+  // 파일 없을 때
+  if (!files || files.length === 0) {
+    container.innerHTML = `<span class="text-muted">첨부파일 없음</span>`;
+    return;
+  }
+
+  // 파일 있을 때
+  files.forEach(file => {
+    const a = document.createElement("a");
+
+    a.href = `/download?fileId=${file.fileId}`; // 다운로드 URL
+    a.textContent = file.fileNameOriginal;
+    a.dataset.savename = file.fileNameSaved;
+
+    // 새 창 방지 + 안전
+    a.target = "_self";
+
+    container.appendChild(a);
+    container.appendChild(document.createElement("br"));
+  });
+}
 async function getWriteDetail(postId){
 
     const detail = $.ajax({
@@ -60,15 +85,18 @@ async function getWriteDetail(postId){
         data : {postId:postId},
     }).then((resp) => {
 
-    const { isOwner, write } = resp;
+    const { isOwner, write, uploadFiles } = resp;
     const { postId, postTitle, postContent, postDate, memberId } = write;
-        return{
+    const files = uploadFiles?.files ?? [];
+    //if(files.length === 0) 
+       return{
             writeId: postId,
             writeTitle: postTitle,
             writeContent: postContent,
             writeDate: postDate,
             memberId: memberId,
-            isOwner: isOwner
+            isOwner: isOwner,
+            uploadFiles : files
         }
     });
         /*

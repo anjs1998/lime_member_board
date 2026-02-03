@@ -300,5 +300,11 @@ The styling for this basic card example is created by using default Bootstrap ut
 
     <!-- Page level custom scripts -->
     <script src="/js/demo/datatables-demo.js"></script>
+
+    <!-- For loading existing posts-->
+    <script src="/js/board/boardDetail.js"></script>
+    <!-- source code for this page-->
+    <script src="/js/board/boardModify.js"></script>
+
   </body>
 </html>

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class WriteFile{
-    private int fileId;                // FILE_ID
+    private long fileId;                // FILE_ID
     private long postId;                // POST_ID
     private String path;              // PATH (저장 경로)
     private String fileNameOriginal;  // FILE_NAME_ORIGINAL (원본 파일명)

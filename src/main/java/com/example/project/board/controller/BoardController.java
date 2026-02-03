@@ -42,7 +42,7 @@ public class BoardController {
     }
 	
 	@GetMapping("/write/modify")
-	public String boardWriteModify() {
+	public String boardWriteModify(@RequestParam("postId") int postId) {
         return "board/modify"; 
     }
 	
@@ -73,10 +73,12 @@ public class BoardController {
 			@SessionAttribute(name="loginMember", required=false) Member loginMember) {
 		
 		
-		Write writeDto = service.getBoardDetail(writeId);
+		Write writeDto = service.getBoardDetail(writeId); // Write DTO 조회 
+		Map<String, Object> uploadFileMap = service.selectWriteFilesByWriteId(writeId); //WriteFile DTO 조회
 		boolean isOwner = (loginMember != null && loginMember.getMemberId() == writeDto.getMemberId());
 		return Map.of(
 		        "write", writeDto,
+		        "uploadFiles", uploadFileMap,
 		        "isOwner", isOwner
 		    );
 		

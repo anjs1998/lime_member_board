@@ -29,6 +29,9 @@ public interface BoardMapper {
     /** 게시글 소프트 삭제 (DELETED_AT 업데이트) */
 	int deleteWriteById(long writeId);
 
+	
+	List<WriteFile> selectFiles(@Param("postId") long postId);
+	
 	int insertFiles(@Param("postId") long postId,
             @Param("uploadList") List<WriteFile> uploadList);
 	

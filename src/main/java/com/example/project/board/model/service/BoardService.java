@@ -13,7 +13,8 @@ public interface BoardService {
 	Map<String, Object> selectWriteList(int cp);
 
 	Write getBoardDetail(long writeId);
-
+	
+	Map<String, Object> selectWriteFilesByWriteId(long writeId);
 	long deleteBoardDetail(long writeId);
 
 	long insertBoardDetail(Write inputWrite, List<MultipartFile> images) throws Exception;
