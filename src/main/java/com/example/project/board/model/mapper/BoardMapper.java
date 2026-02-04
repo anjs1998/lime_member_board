@@ -36,7 +36,17 @@ public interface BoardMapper {
             @Param("uploadList") List<WriteFile> uploadList);
 	
 
-	
+    // 1. 삭제 대상 파일 메타 조회
+    List<WriteFile> selectFilesByPostIdAndFileIds(
+            @Param("postId") long postId,
+            @Param("fileIds") List<Long> fileIds
+    );
+
+    // 2. DB 삭제
+    int deleteFilesByPostIdAndFileIds(
+            @Param("postId") long postId,
+            @Param("fileIds") List<Long> fileIds
+    );
 
 
 }

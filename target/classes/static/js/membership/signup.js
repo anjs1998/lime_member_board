@@ -230,7 +230,6 @@ async function isNicknameExists(){
         }else if(result === false ){
             return {isOk : true, isExist : false}; // 존재하지 않는 새로운 닉네암
         }else{
-
             return {isOk : false, message : "check if the nickname input is empty!"};;// 닉네임이 비었거나 다른 오류가 생김.
         }
 
@@ -273,9 +272,7 @@ async function isEmailExists(){
         const fd = new FormData();
         fd.append("memberEmail", memberEmail.value.trim());
         const isExists = await fetch("/checkEmailExists", {
-
             method:"POST",
-
             body: fd
         }).then( res => res.json())
         checkButton.dataset.checked = isExists ? "N" :"Y"; // checkEmailButton의 data-checked의 값을 수정.

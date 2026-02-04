@@ -32,6 +32,12 @@
       href="/vendor/datatables/dataTables.bootstrap4.min.css"
       rel="stylesheet"
     />
+
+    <!-- For loading existing posts-->
+    <script src="/js/board/boardDetail.js"></script>
+    <!-- source code for this page-->
+    <script src="/js/board/boardModify.js"></script>
+
   </head>
 
   <body id="page-top">
@@ -45,7 +51,7 @@
         <!-- Sidebar - Brand -->
         <a
           class="sidebar-brand d-flex align-items-center justify-content-center"
-          href="index.html"
+          href="/"
         >
           <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-laugh-wink"></i>
@@ -191,13 +197,14 @@
                           class="form-control"
                           placeholder="제목"
                           value="test 제목"
-                          maxlength="4000"
+                          maxlength="1333"
                         />
                       </div>
-                      <a href="tables.html">
+                      <a>
                         <button
                           type="button"
                           class="btn btn-primary btn float-right ml-1"
+                          onclick = "submitModify()"
                         >
                           수정완료
                         </button></a
@@ -212,12 +219,33 @@
                         placeholder="내용
                         "
                         style="resize: none"
-                        maxlength="4000"
+                        maxlength="1333"
                       >
 The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS! Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS!</textarea
                       >
                     </div>
                   </div>
+
+                  <div class="card-body fileUpLoad">
+                    <label class="fileUpLoadBtn" id="addFileBtn">추가 파일</label>
+
+                    <!-- 실제 파일 선택 input (숨김) -->
+                    <input type="file" id="fileInput" name="newFiles" style="">
+                    <!-- 삭제할 파일 id 목록 -->
+                    <input type="hidden" name="deletedFileIds" id="deletedFileIds" value="">
+                    <div id="fileName" class="fileName">
+                      <!-- 기존 파일 -->
+                      <div class="file-item">
+                        <a href="#" data-savename="1711943118813_listener.ora">listener.ora</a>
+                        <button type="button"
+                                class="close remove-file"
+                                aria-label="파일 삭제">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
                 </form>
               </div>
             </div>
@@ -301,10 +329,6 @@ The styling for this basic card example is created by using default Bootstrap ut
     <!-- Page level custom scripts -->
     <script src="/js/demo/datatables-demo.js"></script>
 
-    <!-- For loading existing posts-->
-    <script src="/js/board/boardDetail.js"></script>
-    <!-- source code for this page-->
-    <script src="/js/board/boardModify.js"></script>
 
   </body>
 </html>

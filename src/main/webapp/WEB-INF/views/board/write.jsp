@@ -189,7 +189,7 @@
                           name="title"
                           class="form-control"
                           placeholder="제목"
-                          maxlength="4000"
+                          maxlength="1333"
                         />
                       </div>
                       <a >
@@ -211,7 +211,7 @@
                         placeholder="내용
                         "
                         style="resize: none"
-                        maxlength="4000"
+                        maxlength="1333"
                       ></textarea>
                     </div>
                   </div>

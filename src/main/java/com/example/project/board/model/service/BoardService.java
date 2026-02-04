@@ -15,8 +15,12 @@ public interface BoardService {
 	Write getBoardDetail(long writeId);
 	
 	Map<String, Object> selectWriteFilesByWriteId(long writeId);
-	long deleteBoardDetail(long writeId);
+	long deleteBoardDetail(long writeId) throws Exception;
 
 	long insertBoardDetail(Write inputWrite, List<MultipartFile> images) throws Exception;
+
+	long modifyBoardDetail(Write inputWrite, List<MultipartFile> newFiles, List<Long> deletedFileIdList)throws Exception;
+
+	int deleteFiles(long postId, List<Long> deletedFileIds) throws Exception ;
 
 }

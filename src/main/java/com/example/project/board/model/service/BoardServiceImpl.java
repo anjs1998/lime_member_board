@@ -1,6 +1,7 @@
 package com.example.project.board.model.service;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -171,11 +173,146 @@ public class BoardServiceImpl implements BoardService{
 		return newWriteCount;
 	}
 	
+	
 	@Override
-	public long deleteBoardDetail(long writeId) {
+	public long modifyBoardDetail(Write inputWrite, List<MultipartFile> newFiles, List<Long> deletedFileIds) throws Exception {
 		// TODO Auto-generated method stub
-		return mapper.deleteWriteById(writeId);
+		//1. deleteFileIds에서 언급한 파일들 db에서 삭제.
+		int deleteResult = 0;
+		if(deletedFileIds.size() != 0) deleteResult = deleteFiles(inputWrite.getPostId(), deletedFileIds);
+		
+		log.debug("deletedFileIds.Size() : " + deletedFileIds.size() +" , " +"deleteResult: " + deleteResult);
+		//2. Write 제목, 본문 update(PostId만 그대로 유지)
+		mapper.updateWrite(inputWrite);
+		//3. 새 WriteFiles 목록 추가
+		if(newFiles.size() != 0) insertFiles(inputWrite.getPostId(), newFiles);
+		
+		return inputWrite.getPostId();
 	}
+	
+	@Override
+	public long deleteBoardDetail(long writeId) throws Exception{
+		// TODO Auto-generated method stub
+		
+		//1. 글에 첨부파일이 있는지 조회
+		List<WriteFile> files = mapper.selectFiles(writeId);
+		if(files.size() == 0) return mapper.deleteWriteById(writeId);// 첨부파일 없으면 그냥  //3. 본문 WriteDto 삭제. 로 넘어감
+		else {
+			//2. 첨부파일 삭제
+			List<Long> fileIds = new ArrayList();
+			for(WriteFile file : files) {
+				
+				fileIds.add(file.getFileId());
+				
+			}
+			deleteFiles(writeId, fileIds);
+			//3. 본문 WriteDto 삭제.
+			return mapper.deleteWriteById(writeId);
+		}
+		
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	/**************************************************************************************************************************/
+	public int insertFiles(long postId, List<MultipartFile> files) throws Exception {
+		List<WriteFile> uploadList = new ArrayList<>();
+		for(int i = 0; i < files.size(); i++) {
+					
+				if(!files.get(i).isEmpty()) {
+					
+					String originalName = files.get(i).getOriginalFilename();
+					String rename = Utility.fileRename(originalName);
+					WriteFile file = WriteFile.builder()
+							.fileNameOriginal(originalName)
+							.fileNameSaved(rename)
+							.path(rename)
+							.postId(postId)
+							.uploadFile(files.get(i))
+							.build();
+					uploadList.add(file);
+					log.debug("file inputWriteId: "+file.getPostId());
+					
+				}
+			}
+			if(uploadList.isEmpty()) {
+				return 0; // 0개 파일 업로드.
+			}
+			
+			// 선택한 파일이 존재할 경우
+			// -> "WRITE_FILE" 테이블에 insert + 서버에 파일 저장
+			
+			// result == 삽입된 행의 개수 == uploadList.size()
+			int result = mapper.insertFiles(postId, uploadList);
+			
+			//if(newWriteCount > =0) {newPostId = mapper.insertFiles(, files);}
+			/*		// 삽입 실패 시
+			
+			}*/
+			
+			// 다중 INSERT 성공 확인 
+			// (uploadList에 저장된 값이 모두 정상 삽입 되었는가)
+			if(result == uploadList.size()) {
+				
+				// todo : 서버에 파일 저장
+				for(WriteFile file : uploadList) {
+					Path savePath = Paths.get(folderPath, file.getFileNameSaved());
+					
+					file.getUploadFile().transferTo(savePath.toFile());
+				}
+				
+			} else {
+				// 부분적으로 삽입 실패
+				// ex) uploadList 에 2개 저장
+				// -> 1개 삽입 성공 1개는 실패
+				// -> 전체 서비스 실패로 판단
+				// -> 이전에 삽입된 내용 모두 rollback
+				
+				// rollback 하는 방법
+				// == RuntimeException 강제 발생 (@Transactional)
+				throw new RuntimeException();
+			}
+			return result;
+	
+	}
+	/**실제 컴퓨터 저장공간에 있는 file들의 물리적 삭제 + DB상의 WriteFile dto 정보 삭제.*/
+	@Override
+	@Transactional
+	public int deleteFiles(long postId, List<Long> deletedFileIds) throws Exception {
 
+        if (deletedFileIds == null || deletedFileIds.isEmpty()) {
+            return 0;
+        }
+
+        // 1️. 삭제 대상 파일 메타 조회
+        List<WriteFile> files =
+                mapper.selectFilesByPostIdAndFileIds(postId, deletedFileIds);
+       
+        // 2️. 실제 파일 삭제
+        for (WriteFile file : files) {
+            Path fullPath = Paths.get(
+            		folderPath,
+                    file.getPath(),
+                    file.getFileNameSaved()
+            );
+
+            try {
+                Files.deleteIfExists(fullPath);
+            } catch (IOException e) {
+                throw new RuntimeException("파일 삭제 실패: " + fullPath, e);
+            }
+        }
+
+        // 3️. DB 삭제
+        int result =mapper.deleteFilesByPostIdAndFileIds(postId, deletedFileIds);
+        
+        //4. 삭제된 파일 개수 return
+        return result;
+    }
 
 }

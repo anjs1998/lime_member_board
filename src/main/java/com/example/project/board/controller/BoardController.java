@@ -1,6 +1,7 @@
 package com.example.project.board.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -113,10 +114,14 @@ public class BoardController {
 	}
 	/**게시글 수정
 	 * 
-	 * @param inputWrite : 새로 작성한 게시글 dto
-	 * @param loginMember 
+	 * @param postIdString 게시글 Id를 String으로 받는 매개변수
+	 * @param title 수정된 게시글 제목
+	 * @param content 수정된 게시글 내용
+	 * @param loginMember  현재 로그인중인 회원 정보
 	 * @param files
-	 * @return 작성된 게시글의 번호 반환. 0을 반환시 실패로 간주.
+	 * @param deletedFileIds - 삭제를 원하는 파일의 id를 나열하여 String으로 합쳐서 받는 매개변수.
+	 * @param newFiles - 새로 upload된 파일들.
+	 * @return 수정된 게시글의 번호 반환. 0을 반환시 실패로 간주.
 	 * */
 	@ResponseBody
 	@PostMapping("/board/modify")
@@ -125,18 +130,27 @@ public class BoardController {
 			@RequestParam(value="title", required = true) String title, 
 			@RequestParam(value="content", required=true) String content,
 			@SessionAttribute("loginMember") Member loginMember,
-			@RequestParam("images") List<MultipartFile> images) throws Exception{
+		    @RequestParam(value="deletedFileIds", required = false) String deletedFileIds, // 얘가 왜 null로 들어오지?
+		    @RequestParam(value="newFiles", required = false) List<MultipartFile> newFiles) throws Exception{
 		
 		
+		//String으로 받은 id들을 List<Long>으로 변환.
+		List <Long> deletedFileIdList= new ArrayList<Long>();
+		if (deletedFileIds != null && !deletedFileIds.isBlank()) {
+			deletedFileIdList = Arrays.stream(deletedFileIds.split(","))
+		                               .map(Long::parseLong)
+		                               .toList();}
+		log.debug("deletedFileIds : "+deletedFileIds+ "deletedFileIdList.size() : " + deletedFileIdList.size());
+			
 		Write inputWrite = new Write();
-		
+		//log.debug(postIdString);
 		long postId = Long.parseLong(postIdString); // String -> Long 형변환
 		inputWrite.setPostId(postId);
 		inputWrite.setPostTitle(title);
 		inputWrite.setPostContent(content);
 		inputWrite.setMemberId(loginMember.getMemberId());
 		//inputBoard.setMemberNo(loginMember.getMemberNo());
-		long boardNo = service.insertBoardDetail(inputWrite, images);
+		long boardNo = service.modifyBoardDetail(inputWrite, newFiles, deletedFileIdList);
 		
 		
 		return boardNo;
@@ -145,7 +159,7 @@ public class BoardController {
 	
 	@ResponseBody
 	@PostMapping("/delete")
-	public long deleteBoardDetail(@RequestParam(value="postId", required = true) long writeId) {
+	public long deleteBoardDetail(@RequestParam(value="postId", required = true) long writeId) throws Exception{
 		
 		long result = service.deleteBoardDetail(writeId);
 		

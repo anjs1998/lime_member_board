@@ -1,15 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 일단 수정/삭제 버튼 숨기기.
+  
     
+
     loadWriteDetail();
 });
 
 
-
+/*제목, 내용, 파일 loading하는 함수*/ 
 async function loadWriteDetail(){
     const detailTitle = document.getElementById("detailTitle");
     const detailBody = document.getElementById("detailBody");
-    //todo : 첨부파일 표시하는 태그 얻어와서 첨부파일 표시 처리.
+    
 
     const detailModifyBtn = document.querySelector('button[name="modify-post-button"]'); // 글 수정 버튼
     const detailDeleteBtn = document.querySelector('button[name="delete-post-button"]'); // 글 삭제 버튼
@@ -76,6 +77,11 @@ function renderUploadFiles(files) {
     container.appendChild(document.createElement("br"));
   });
 }
+
+
+
+/*서버 측에서 게시글 불러오기 @param postid 
+*/ 
 async function getWriteDetail(postId){
 
     const detail = $.ajax({
@@ -106,4 +112,29 @@ async function getWriteDetail(postId){
 
         }*/
     return detail;
+}
+
+/**************************************************************** */
+
+
+/*글 수정 페이지로*/ 
+function modifyPostButtonHandler(){
+    const params = new URLSearchParams(window.location.search);
+    const postId = params.get("postId");
+
+
+    location.href = `/write/modify?postId=${postId}`;
+
+
+}
+/*글 삭제*/ 
+async function deletePostButtonHandler(){
+    const params = new URLSearchParams(window.location.search);
+    const postId = params.get("postId");
+
+    if(confirm("정말로 삭제하시겠습니까?")){
+        //todo
+        return ;
+
+    }
 }

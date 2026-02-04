@@ -35,16 +35,15 @@
        - 최신글이 위로 오도록 정렬
   -->
   <select id="selectWriteList" resultMap="writeMap">
-    SELECT
-      POST_ID,
-      POST_TITLE,
-      POST_CONTENT,
-      POST_DATE,
-      MEMBER_ID,
-      DELETED_AT
-    FROM "WRITE"
-    WHERE DELETED_AT IS NULL
-    ORDER BY POST_DATE DESC
+    SELECT POST_ID
+         , POST_TITLE
+         , POST_CONTENT
+         , POST_DATE
+         , MEMBER_ID
+         , DELETED_AT
+      FROM "WRITE"
+     WHERE DELETED_AT IS NULL
+  ORDER BY POST_DATE DESC
   </select>
     <!-- 게시글 등록
        - POST_ID: 시퀀스 사용 가정 (SEQ_POST_ID.NEXTVAL)
@@ -74,22 +73,23 @@
 		</selectKey>
     
 	    INSERT INTO "WRITE"
-	    (
-	      POST_ID,
-	      POST_TITLE,
+	         ( POST_ID
+	         , POST_TITLE,
 	      POST_CONTENT,
 	      POST_DATE,
 	      MEMBER_ID
-	    )
+	         )
 	    VALUES
-	    (
+	         (
 	      #{postId}  ,
 	      #{postTitle},
 	      #{postContent},
 	      SYSDATE,
 	      #{memberId}
-	    )
+	         )
   </insert>
+  
+  
   <select id="selectFiles" parameterType = "long" resultMap = "writeFileMap">
   
   	    SELECT
@@ -141,7 +141,31 @@
       AND DELETED_AT IS NULL
   </update>
    
-   
-   
-   
+   <!-- 삭제할 파일 메타 조회 -->
+	<select id="selectFilesByPostIdAndFileIds"
+	        resultType="com.example.project.board.model.dto.WriteFile">
+	
+	    SELECT
+	        FILE_ID            AS fileId,
+	        POST_ID            AS postId,
+	        PATH               AS path,
+	        FILE_NAME_ORIGINAL AS fileNameOriginal,
+	        FILE_NAME_SAVED    AS fileNameSaved,
+	        DATE_SAVED         AS dateSaved
+	    FROM WRITE_FILE
+	    WHERE POST_ID = #{postId}
+	      AND FILE_ID IN
+	    <foreach collection="fileIds" item="id" open="(" separator="," close=")">
+	        #{id}
+	    </foreach>
+	</select>
+	<delete id="deleteFilesByPostIdAndFileIds">
+	  DELETE FROM WRITE_FILE
+	  WHERE POST_ID = #{postId}
+	    AND FILE_ID IN
+	    <foreach collection="fileIds" item="id" open="(" separator="," close=")">
+	      #{id}
+	    </foreach>
+	</delete>
+	   
 </mapper>

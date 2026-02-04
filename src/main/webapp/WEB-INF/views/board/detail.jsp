@@ -188,12 +188,13 @@
                     >
                       글 제목 로딩중...
                     </h6>
-                    <a href="/write/modify" class="owner-only" hidden>
+                    <a aria-hidden="" class="owner-only" hidden>
                       <button
                         name="modify-post-button"
                         type="button"
                         class="btn btn-primary btn float-right ml-1 owner-only"
-                      hidden>
+                        onclick="modifyPostButtonHandler()"
+                        hidden>
                         수정
                       </button>
                     </a>
@@ -201,6 +202,7 @@
                       name="delete-post-button"
                       type="button"
                       class="btn btn-danger btn float-right owner-only"
+                      onclick="deletePostButtonHandler()"
                     hidden>
                       삭제
                     </button>
