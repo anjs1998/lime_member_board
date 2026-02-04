@@ -123,6 +123,7 @@
                         name="memberAddress"
                         class="form-control form-control-user"
                         placeholder="주소"
+                        readonly
                       />
                     </div>
                     <div class="col-sm-3">
@@ -140,6 +141,7 @@
                       name="memberAddressSub"
                       class="form-control form-control-user"
                       placeholder="상세주소"
+                      readonly
                     />
                   </div>
                   <div class="form-group row">
@@ -152,6 +154,7 @@
 
                         pattern="[0-9]{5}"
                         maxlength="5"
+                        readonly
                       />
                     </div>
                     <div class="col-sm-6">
@@ -161,6 +164,7 @@
                         class="form-control form-control-user"
                        
                         placeholder="참고사항"
+                        readonly
                       />
                     </div>
                   </div>
@@ -212,6 +216,9 @@
                   console.log(data);
                   document.querySelector('input[name="memberDescription"]').value =  data.buildingName; // 상세주소에 빌딩 이름 입력
                   
+                  document.querySelector('input[name="memberAddressSub"]').readOnly = false;
+                  document.querySelector('input[name="memberAddressSub"]').placeholder = "상세주소를 입력하세요";
+                  document.querySelector('input[name="memberDescription"]').readOnly = false;
                 }
           }).open();
       }

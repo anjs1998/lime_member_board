@@ -42,7 +42,7 @@ function renderPagination(paginationDto) {
     label: "Previous",
     page: paginationDto.currentPage - 1,
     disabled: !(paginationDto.hasPrev),
-    active: paginationDto.hasPrev
+    
   });
 
   // 페이지 번호들
@@ -59,6 +59,6 @@ function renderPagination(paginationDto) {
     label: "Next",
     page: paginationDto.currentPage + 1,
     disabled: !(paginationDto.hasNext),
-    active: paginationDto.hasNext
+    
   });
 }

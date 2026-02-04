@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 }); // DOM 로딩후 전번 하이픈 자동변환 함수 실행,
 
 
-function signup(){
+async function signup(){
    
 
     // 1. confirm("회원가입 하시겟습니까?")
@@ -16,7 +16,7 @@ function signup(){
     const form = document.getElementById("register-user");
     const formData = new FormData(form);
 
-    if(!isAllSubmitValid()) return;
+    if(!(await isAllSubmitValid())) return;
     else if (confirm("회원가입 하시겠습니까?")) {
 
         
@@ -53,7 +53,7 @@ function signup(){
 
 //모든 필수 사항들이 작성되었는지 체크하는 함수.
 //만약 필수 사항들이 빈채로 회원가입 버튼을 눌렀다면, alert실행.
-function isAllSubmitValid(){
+async function isAllSubmitValid(){
     
     function isInputEmpty(input){
         return !(input.value.trim())
@@ -86,15 +86,18 @@ function isAllSubmitValid(){
     //우편번호 체크용 정규식
     const postalRegex = /^\d{5}$/;
     
-    const nickname = isNicknameExists();
-    
+    const {
+    isOk: nicknameCheckOk ,
+    isExist : isNicknameExist 
+    } = await isNicknameExists(); // undefined 주의
+    console.log("isOk, isExist : ", nicknameCheckOk, isNicknameExist);
     // 개별 input들의 empty check
     if (isInputEmpty(memberNickname)) {
         alert("이름을 입력하세요!");
         memberNickname.focus();
         return false;
 
-    }else if(nickname.isExist){
+    }else if(nicknameCheckOk && isNicknameExist){
         alert("이미 존재하는 닉네임입니다!");
         memberNickname.focus();
         memberNicknameChecker.hidden = false;
@@ -249,10 +252,12 @@ async function isNicknameExists(){
 }
 /*이메일 중복체크 html용 wrapper*/
 async function checkEmailExists(){
-    
+
+    memberEmail = document.querySelector('input[name="memberEmail"]');
     
     isExist = await isEmailExists();
-    if(isExist){  alert("이미 존재하거나 사용 불가능한 이메일입니다");}
+    if(memberEmail.value === "") return;
+    else if(isExist){  alert("이미 존재하거나 사용 불가능한 이메일입니다");}
     else{ alert("사용 가능한 이메일입니다.");}
 
 }
