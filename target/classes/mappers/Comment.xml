@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.project.board.model.mapper.CommentMapper">
+
+    <!-- 댓글 단일 조회 -->
+    <select id="selectCommentById"
+            parameterType="long"
+            resultType="com.example.project.board.model.dto.Comment">
+        SELECT
+            c.COMMENT_ID           AS commentId,
+            c.COMMENT_TIME         AS commentTime,
+            c.POST_ID              AS postId,
+            c.PARENT_COMMENT_ID    AS parentCommentId,
+            c.COMMENT_CONTENT      AS commentContent,
+            c.DELETED_AT           AS deletedAt,
+            c.MEMBER_ID            AS memberId,
+            m.MEMBER_NICKNAME      AS memberNickname
+        FROM COMMENT c
+        JOIN MEMBER m
+          ON c.MEMBER_ID = m.MEMBER_ID
+        WHERE c.COMMENT_ID = #{commentId}
+          AND c.DELETED_AT IS NULL
+    </select>
+
+    <!-- 댓글 등록 -->
+    <insert id="insertComment"
+            parameterType="com.example.project.board.model.dto.Comment">
+        INSERT INTO COMMENT (
+            COMMENT_ID,
+            COMMENT_TIME,
+            POST_ID,
+            PARENT_COMMENT_ID,
+            COMMENT_CONTENT,
+            MEMBER_ID
+        )
+        VALUES (
+            SEQ_COMMENT_ID.NEXTVAL,
+            SYSTIMESTAMP,
+            #{postId},
+            #{parentCommentId},
+            #{commentContent},
+            #{memberId}
+        )
+    </insert>
+
+    <!-- 댓글 수정 -->
+    <update id="modifyComment">
+        UPDATE COMMENT
+        SET COMMENT_CONTENT = #{content}
+        WHERE COMMENT_ID = #{commentId}
+          AND DELETED_AT IS NULL
+    </update>
+
+    <!-- 댓글 삭제 (소프트 삭제) -->
+    <update id="deleteComment"
+            parameterType="long">
+        UPDATE COMMENT
+        SET DELETED_AT = SYSTIMESTAMP
+        WHERE COMMENT_ID = #{commentId}
+    </update>
+
+</mapper>

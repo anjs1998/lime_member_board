@@ -39,7 +39,26 @@ public class LoginFilter implements Filter{
 		HttpServletResponse resp = (HttpServletResponse) response;
 		
 		
-
+		// 1️. 예외 URL
+		String uri = req.getRequestURI();
+		if (
+		  
+		    uri.startsWith("/css") ||
+		    uri.startsWith("/vendor") ||
+		    uri.startsWith("/js") ||
+		    uri.startsWith("/images") ||
+		    uri.startsWith("/favicon.ico") ||
+		    
+		    uri.startsWith("/membership/login") || // 로그인 페이지
+		    uri.startsWith("/login") || // 로그인 ajax 요청
+		    
+		    uri.startsWith("/download") || // 게시글 파일 다운로드 요청
+		    
+		    uri.equals("/")
+		) {
+		    chain.doFilter(request, response);
+		    return;
+		}
 		
 		// **********************************************
 		
@@ -63,6 +82,7 @@ public class LoginFilter implements Filter{
 			
 			// 다음 필터로 요청/응답 객체 전달
 			// 만약에 다음 필터가 없으면 DispatcherServlet로 요청/응답 객체 전달
+			System.out.println("[LoginFilter] uri=" + ((HttpServletRequest)request).getRequestURI());
 			chain.doFilter(request, response);
 		}
 		

@@ -34,7 +34,7 @@ async function loadWriteList(page = 1) {
           tbody.innerHTML = writeList.map(row => {
           // 서버에서 내려주는 키 이름에 맞추면 됨
           // (예시) nickname, postId, postTitle, postDate, commentCount
-          const nickname = row.nickname ?? "익명";
+          const nickname = row.memberNickname ?? "익명";
           const title = row.postTitle ?? "(제목 없음)";
           const postId = row.postId; // 숫자라 가정
           const commentCount = row.commentCount ?? 0;

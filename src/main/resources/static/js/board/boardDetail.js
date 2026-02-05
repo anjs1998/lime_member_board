@@ -66,7 +66,7 @@ function renderUploadFiles(files) {
   files.forEach(file => {
     const a = document.createElement("a");
 
-    a.href = `/download?fileId=${file.fileId}`; // 다운로드 URL
+    a.href = `/download/file?fileId=${file.fileId}`; // 다운로드 URL
     a.textContent = file.fileNameOriginal;
     a.dataset.savename = file.fileNameSaved;
 
@@ -92,7 +92,7 @@ async function getWriteDetail(postId){
     }).then((resp) => {
 
     const { isOwner, write, uploadFiles } = resp;
-    const { postId, postTitle, postContent, postDate, memberId } = write;
+    const { postId, postTitle, postContent, postDate, memberId, memberNickname } = write;
     const files = uploadFiles?.files ?? [];
     //if(files.length === 0) 
        return{
@@ -101,6 +101,7 @@ async function getWriteDetail(postId){
             writeContent: postContent,
             writeDate: postDate,
             memberId: memberId,
+            nickname: memberNickname,
             isOwner: isOwner,
             uploadFiles : files
         }
@@ -133,7 +134,28 @@ async function deletePostButtonHandler(){
     const postId = params.get("postId");
 
     if(confirm("정말로 삭제하시겠습니까?")){
-        //todo
+        $.ajax({
+        url: `/board/delete?postId=${postId}`, 
+        type: "POST",
+        
+        processData: false,
+        contentType: false,
+        success: function (resp) {
+            // 서버가 "1"/"0" 같은 텍스트를 준다고 가정
+            const result = Number(resp);
+
+            if (result > 0) {
+            alert("게시글 삭제 성공!");
+            location.href = "/"; // 메인으로
+            } else {
+            alert("게시글 삭제 실패..");
+            }
+        },
+        error: function (xhr) {
+            console.log(xhr.responseText);
+            alert("게시글 삭제 오류.. 서버 요청 실패");
+        }
+        });
         return ;
 
     }

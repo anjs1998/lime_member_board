@@ -41,7 +41,8 @@ function login(){
 
 function logout(){
 
-    $.ajax({
+  if(confirm("로그아웃 하시겟습니까?")){
+        $.ajax({
       url: "/logout", // ✅ 너 컨트롤러 매핑에 맞춰서 변경
       type: "GET",
       
@@ -64,6 +65,8 @@ function logout(){
         alert("서버 요청 실패");
       }
     });
+  }
+
 
 
 }

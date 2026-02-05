@@ -33,4 +33,7 @@ public class Comment {
 
     /** 작성자 회원 번호 */
     private Long memberId;
+    
+    /** 작성자 닉네임*/
+    private String memberNickname;
 }

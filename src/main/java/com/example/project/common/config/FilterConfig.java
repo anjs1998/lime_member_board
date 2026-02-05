@@ -23,7 +23,7 @@ public class FilterConfig {
 		filter.setFilter(new LoginFilter());
 		
 		// 필터가 동작할 URL 을 세팅 -> todo: 계속 추가할것.
-		String[] filteringURL = {"/board/*"};
+		String[] filteringURL = {"/*","/board/*"}; // /*를 써놓고 filterConfig에 예외처리를 해주지 않으면 모든 요청이 막힌다.(html, css, js, 로그인페이지, 기타 등등...)
 		
 		// String[] 을 List 로 변환
 		// Arrays.asList(filteringURL) -> List

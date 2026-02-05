@@ -32,6 +32,7 @@
       href="/vendor/datatables/dataTables.bootstrap4.min.css"
       rel="stylesheet"
     />
+
   </head>
 
   <body id="page-top">
@@ -45,7 +46,7 @@
         <!-- Sidebar - Brand -->
         <a
           class="sidebar-brand d-flex align-items-center justify-content-center"
-          href="index.html"
+          href="/"
         >
           <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-laugh-wink"></i>
@@ -85,7 +86,7 @@
 
         <!-- Nav Item - Tables -->
         <li class="nav-item active">
-          <a class="nav-link" href="tables.html">
+          <a class="nav-link" href="/">
             <i class="fas fa-fw fa-table"></i>
             <span>Tables</span></a
           >
@@ -216,7 +217,7 @@
                     </div>
                   </div>
                   <div>
-                    <input type="file" name="uploadFiles" multiple>
+                    <input type="file" name="uploadFiles" onchange="fileInputOnChangeHandler(event)" multiple>
                   </div>
                 </form>
               </div>
@@ -301,7 +302,7 @@
     <!-- Page level custom scripts -->
     <script src="/js/demo/datatables-demo.js"></script>
 
-    <!-- for submitting new Post-->
+    <!-- for submitting new Post & limiting number of files-->
     <script src="/js/board/boardWrite.js"></script>
   </body>
 </html>

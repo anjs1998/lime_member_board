@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.project.board.model.dto.Write;
+import com.example.project.board.model.dto.WriteFile;
 
 public interface BoardService {
 
@@ -21,6 +22,15 @@ public interface BoardService {
 
 	long modifyBoardDetail(Write inputWrite, List<MultipartFile> newFiles, List<Long> deletedFileIdList)throws Exception;
 
+	/********************************************************/
+	WriteFile selectFileOne(long fileId) throws Exception;
+	
+	int insertFiles(long postId, List<MultipartFile> files) throws Exception;
+	
 	int deleteFiles(long postId, List<Long> deletedFileIds) throws Exception ;
+
+	
+
+	
 
 }

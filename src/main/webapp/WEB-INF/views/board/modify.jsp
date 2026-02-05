@@ -229,8 +229,8 @@ The styling for this basic card example is created by using default Bootstrap ut
                   <div class="card-body fileUpLoad">
                     <label class="fileUpLoadBtn" id="addFileBtn">추가 파일</label>
 
-                    <!-- 실제 파일 선택 input (숨김) -->
-                    <input type="file" id="fileInput" name="newFiles" style="">
+                    <!-- 실제 파일 선택 input -->
+                    <input type="file" id="fileInput" name="newFiles" style="" multiple>
                     <!-- 삭제할 파일 id 목록 -->
                     <input type="hidden" name="deletedFileIds" id="deletedFileIds" value="">
                     <div id="fileName" class="fileName">

@@ -1,3 +1,6 @@
+const MAX_FILES = 5;
+
+
 async function submitNewWrite(){
     const form = document.getElementById("submitWrite");
     const formData = new FormData(form);
@@ -32,6 +35,36 @@ async function submitNewWrite(){
 
     
 
+
+
+}
+
+
+function fileInputOnChangeHandler(e){
+
+    //renderFilesToUpload()
+
+    checkNumberOfFiles(e);
+
+
+}
+function renderFilesToUpload(){
+
+}
+/*파일 업로드 최대 개수 제한하는 함수.*/
+function checkNumberOfFiles(e){
+    if (e.target.files.length <= MAX_FILES) return;
+
+  alert(`최대 ${MAX_FILES}개까지만 선택할 수 있어요.`);
+
+  const dt = new DataTransfer();
+
+  // 앞에서 5개만 다시 담기
+  Array.from(e.target.files)
+    .slice(0, MAX_FILES)
+    .forEach(file => dt.items.add(file));
+
+  e.target.files = dt.files;
 
 
 }

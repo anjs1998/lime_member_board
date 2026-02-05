@@ -31,7 +31,8 @@ public interface BoardMapper {
 
 	
 	List<WriteFile> selectFiles(@Param("postId") long postId);
-	
+	WriteFile selectFileOne(@Param("fileId") long fileId);
+	int insertFileOne(@Param("postId") long postId, WriteFile f);
 	int insertFiles(@Param("postId") long postId,
             @Param("uploadList") List<WriteFile> uploadList);
 	

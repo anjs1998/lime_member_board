@@ -113,8 +113,8 @@ public class BoardServiceImpl implements BoardService{
 		// 2. 
 		long inputWriteId = inputWrite.getPostId();
 		
-		List<WriteFile> uploadList = new ArrayList<>();
-		
+		List<WriteFile> uploadList = new ArrayList<>(); //-> DB 오류로 인해 하나씩 대입하는 insertFileOne() 사용
+		int resultCount=0;
 		for(int i = 0; i < files.size(); i++) {
 			
 			if(!files.get(i).isEmpty()) {
@@ -128,20 +128,22 @@ public class BoardServiceImpl implements BoardService{
 						.postId(inputWriteId)
 						.uploadFile(files.get(i))
 						.build();
-				uploadList.add(file);
+				uploadList.add(file); 
+				resultCount += mapper.insertFileOne(inputWriteId, file); // resultCount == 삽입된 행의 개수(본 for문으로 하나씩 늘어남) == uploadList.size()
+				
 				log.debug("file inputWriteId: "+file.getPostId());
 				
 			}
 		}
-		if(uploadList.isEmpty()) {
+		if(resultCount == 0) {
 			return inputWriteId; // 컨트롤러로 현재 제목/상세내용 삽입된 게시글 번호 리턴
 		}
 		
 		// 선택한 파일이 존재할 경우
 		// -> "BOARD_IMG" 테이블에 insert + 서버에 파일 저장
 		
-		// result == 삽입된 행의 개수 == uploadList.size()
-		int result = mapper.insertFiles(inputWriteId, uploadList);
+		
+		 //mapper.insertFiles(inputWriteId, uploadList); -> DB 오류로 인해 하나씩 대입하는 insertFileOne() 사용
 		
 		//if(newWriteCount > =0) {newPostId = mapper.insertFiles(, files);}
 		/*		// 삽입 실패 시
@@ -150,7 +152,7 @@ public class BoardServiceImpl implements BoardService{
 		
 		// 다중 INSERT 성공 확인 
 		// (uploadList에 저장된 값이 모두 정상 삽입 되었는가)
-		if(result == uploadList.size()) {
+		if(resultCount == uploadList.size()) {
 			
 			// todo : 서버에 파일 저장
 			for(WriteFile file : uploadList) {
@@ -220,8 +222,15 @@ public class BoardServiceImpl implements BoardService{
 	
 	
 	/**************************************************************************************************************************/
+	@Override
+	public WriteFile selectFileOne(long fileId) throws Exception{
+		
+		return mapper.selectFileOne(fileId);
+	}
+	@Override
 	public int insertFiles(long postId, List<MultipartFile> files) throws Exception {
 		List<WriteFile> uploadList = new ArrayList<>();
+		int resultCount = 0;
 		for(int i = 0; i < files.size(); i++) {
 					
 				if(!files.get(i).isEmpty()) {
@@ -236,6 +245,7 @@ public class BoardServiceImpl implements BoardService{
 							.uploadFile(files.get(i))
 							.build();
 					uploadList.add(file);
+					resultCount += mapper.insertFileOne(postId, file);
 					log.debug("file inputWriteId: "+file.getPostId());
 					
 				}
@@ -248,7 +258,7 @@ public class BoardServiceImpl implements BoardService{
 			// -> "WRITE_FILE" 테이블에 insert + 서버에 파일 저장
 			
 			// result == 삽입된 행의 개수 == uploadList.size()
-			int result = mapper.insertFiles(postId, uploadList);
+			// int result = mapper.insertFiles(postId, uploadList);-> DB 오류로 인해 하나씩 대입하는 insertFileOne() 사용
 			
 			//if(newWriteCount > =0) {newPostId = mapper.insertFiles(, files);}
 			/*		// 삽입 실패 시
@@ -257,7 +267,7 @@ public class BoardServiceImpl implements BoardService{
 			
 			// 다중 INSERT 성공 확인 
 			// (uploadList에 저장된 값이 모두 정상 삽입 되었는가)
-			if(result == uploadList.size()) {
+			if(resultCount == uploadList.size()) {
 				
 				// todo : 서버에 파일 저장
 				for(WriteFile file : uploadList) {
@@ -277,7 +287,7 @@ public class BoardServiceImpl implements BoardService{
 				// == RuntimeException 강제 발생 (@Transactional)
 				throw new RuntimeException();
 			}
-			return result;
+			return resultCount;
 	
 	}
 	/**실제 컴퓨터 저장공간에 있는 file들의 물리적 삭제 + DB상의 WriteFile dto 정보 삭제.*/
@@ -302,14 +312,15 @@ public class BoardServiceImpl implements BoardService{
             );
 
             try {
-                Files.deleteIfExists(fullPath);
+                boolean isDeleted = Files.deleteIfExists(fullPath);
+                log.debug(file.getPath() + file.getFileNameSaved() + " deleted : " + isDeleted);
             } catch (IOException e) {
                 throw new RuntimeException("파일 삭제 실패: " + fullPath, e);
             }
         }
 
         // 3️. DB 삭제
-        int result =mapper.deleteFilesByPostIdAndFileIds(postId, deletedFileIds);
+        int result = mapper.deleteFilesByPostIdAndFileIds(postId, deletedFileIds);
         
         //4. 삭제된 파일 개수 return
         return result;

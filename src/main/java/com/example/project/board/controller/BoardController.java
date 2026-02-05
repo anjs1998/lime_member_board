@@ -1,22 +1,32 @@
 package com.example.project.board.controller;
 
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 
 import com.example.project.board.model.dto.Write;
+import com.example.project.board.model.dto.WriteFile;
 import com.example.project.board.model.service.BoardService;
 import com.example.project.membership.model.dto.Member;
 
@@ -158,8 +168,8 @@ public class BoardController {
 	}
 	
 	@ResponseBody
-	@PostMapping("/delete")
-	public long deleteBoardDetail(@RequestParam(value="postId", required = true) long writeId) throws Exception{
+	@PostMapping("/board/delete")
+	public long deleteBoardDetail(@RequestParam(value="postId", required = true) long writeId, @SessionAttribute("loginMember") Member loginMember) throws Exception{
 		
 		long result = service.deleteBoardDetail(writeId);
 		
@@ -167,4 +177,24 @@ public class BoardController {
 		
 	}
 
+	/**게시글 첨부파일 다운로드*/
+	@GetMapping("/download/file")
+	public ResponseEntity<Resource> downloadFile(@RequestParam(value="fileId", required = true) long fileId) throws Exception{
+	    
+		WriteFile downloadFile = service.selectFileOne(fileId);
+		
+		String fileNameSaved = downloadFile.getFileNameSaved();
+		Path path = Paths.get("C:/upload/" + fileNameSaved);
+	    Resource resource = new FileSystemResource(path);
+
+	    return ResponseEntity.ok()
+	        .header(HttpHeaders.CONTENT_DISPOSITION,
+	            ContentDisposition.attachment()
+	                .filename(fileNameSaved, StandardCharsets.UTF_8) // ✅ 한글/특수문자 안전
+	                .build()
+	                .toString()
+	        )
+	        .contentLength(Files.size(path))
+	        .body(resource);
+	}
 }

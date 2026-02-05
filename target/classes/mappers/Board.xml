@@ -39,9 +39,11 @@
          , POST_TITLE
          , POST_CONTENT
          , POST_DATE
-         , MEMBER_ID
+         , w.MEMBER_ID
+     	 , m.MEMBER_NICKNAME
          , DELETED_AT
-      FROM "WRITE"
+      FROM "WRITE" w
+      JOIN MEMBER m ON w.MEMBER_ID = m.MEMBER_ID
      WHERE DELETED_AT IS NULL
   ORDER BY POST_DATE DESC
   </select>
@@ -89,37 +91,61 @@
 	         )
   </insert>
   
+  <select id="selectFileOne" parameterType = "long">
+   	SELECT 	  FILE_ID
+  			, POST_ID
+    		, PATH
+    		, FILE_NAME_ORIGINAL
+    		, FILE_NAME_SAVED
+    		, DATE_SAVED
+    FROM 	WRITE_FILE
+    WHERE 	FILE_ID = #{fileId}
   
+  
+  </select>
   <select id="selectFiles" parameterType = "long" resultMap = "writeFileMap">
   
-  	    SELECT
-        FILE_ID,
-        POST_ID,
-        PATH,
-        FILE_NAME_ORIGINAL,
-        FILE_NAME_SAVED,
-        DATE_SAVED
-    FROM WRITE_FILE
-    WHERE POST_ID = #{postId}
+  	SELECT 	  FILE_ID
+  			, POST_ID
+    		, PATH
+    		, FILE_NAME_ORIGINAL
+    		, FILE_NAME_SAVED
+    		, DATE_SAVED
+    FROM 	WRITE_FILE
+    WHERE 	POST_ID = #{postId}
   </select>
-  <!--파일 등록.-->
-  <insert id="insertFiles"
-	        parameterType="java.util.List">
-	    
-	    INSERT INTO WRITE_FILE
-	    (
-	        FILE_ID,
-	        POST_ID,
-	        PATH,
-	        FILE_NAME_ORIGINAL,
-	        FILE_NAME_SAVED,
-	        DATE_SAVED
-	    )  
-	    VALUES
-	    <foreach collection="uploadList" item="f" separator=",">
-    			(SEQ_FILE_ID.NEXTVAL, #{postId}, #{f.path}, #{f.fileNameOriginal}, #{f.fileNameSaved}, SYSDATE)
-  		</foreach>
-	</insert> 
+  <!--파일 하나씩 등록-->
+  <insert id="insertFileOne" parameterType = "com.example.project.board.model.dto.WriteFile"> <!--system으로 DB 접속시 이걸 사용할것.-->
+	  INSERT INTO WRITE_FILE (
+	    FILE_ID, POST_ID, PATH,
+	    FILE_NAME_ORIGINAL, FILE_NAME_SAVED, DATE_SAVED
+	  ) VALUES (
+	    SEQ_FILE_ID.NEXTVAL,
+	    #{f.postId},
+	    #{f.path},
+	    #{f.fileNameOriginal},
+	    #{f.fileNameSaved},
+	    SYSDATE
+	  )
+	</insert>
+  <!--파일 list 등록.-->
+	<insert id="insertFiles">
+	  INSERT ALL
+	  <foreach collection="uploadList" item="f">
+	    INTO WRITE_FILE (
+	      FILE_ID, POST_ID, PATH,
+	      FILE_NAME_ORIGINAL, FILE_NAME_SAVED, DATE_SAVED
+	    ) VALUES (
+	      SEQ_FILE_ID.NEXTVAL,
+	      #{f.postId},
+	      #{f.path},
+	      #{f.fileNameOriginal},
+	      #{f.fileNameSaved},
+	      SYSDATE
+	    )
+	  </foreach>
+	  SELECT 1 FROM DUAL
+	</insert>
   <!-- 게시글 수정 (삭제되지 않은 글만)
        - 수정 시점 기록 컬럼이 없어서 POST_DATE는 건드리지 않음
   -->

@@ -1,5 +1,5 @@
 
-
+const MAX_FILES = 5;
 
 document.addEventListener("DOMContentLoaded", () => {
     
@@ -146,4 +146,44 @@ function appendDeleteFileId(fileId) {
   }
 
   input.value = current.join(",");
+}
+
+
+/*파일 업로드를 5개로 제한하는 함수.*/ 
+function limitMaxFiles(){
+    const fileInput = document.getElementById("fileInput");
+    const fileNameDiv = document.getElementById("fileName");
+
+    fileInput.addEventListener("change", function () {
+    // 1️⃣ 현재 기존 파일 개수
+    const existingCount = fileNameDiv.querySelectorAll(".file-item").length;
+
+    // 2️⃣ 남은 업로드 가능 개수
+    const availableCount = MAX_FILES - existingCount;
+
+    if (availableCount <= 0) {
+        alert("이미 최대 5개의 파일이 업로드되어 있어요.");
+        this.value = "";
+        return;
+    }
+
+    // 3️⃣ 새로 선택한 파일이 초과한 경우
+    if (this.files.length > availableCount) {
+        alert(`파일은 최대 ${MAX_FILES}개까지 업로드할 수 있어요.\n` +
+            `새 파일은 ${availableCount}개만 추가할게요.`);
+
+        const dt = new DataTransfer();
+
+        Array.from(this.files)
+        .slice(0, availableCount)
+        .forEach(file => dt.items.add(file));
+
+        this.files = dt.files;
+    }
+
+    // 4️⃣ 선택된 신규 파일 화면에 표시
+    renderNewFiles(this.files);
+});
+
+
 }
