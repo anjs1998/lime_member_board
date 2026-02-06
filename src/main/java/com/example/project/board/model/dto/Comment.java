@@ -36,4 +36,6 @@ public class Comment {
     
     /** 작성자 닉네임*/
     private String memberNickname;
+    
+    private Integer depth;// 실 DB엔 없는 값. 대댓글의 몇대손인지 표기. 
 }

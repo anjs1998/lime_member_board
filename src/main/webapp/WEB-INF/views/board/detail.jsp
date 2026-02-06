@@ -33,7 +33,6 @@
       rel="stylesheet"
     />
 
-    <script src="/js/board/boardDetail.js"></script>
   </head>
 
   <body id="page-top">
@@ -229,160 +228,7 @@
                   <input type="hidden" name="parentCommentNo" value="0">
                   <input type="hidden" name="commentNo" value="0">
                     <ul id="commentDiv" style="max-height: 500px; overflow-y: scroll;overflow-x: hidden;">
-                       
-                       <li data-no="1" data-name="test" data-date="2024-04-01 12:45:23" data-parent="0">
-                         <div class="commentDiv" style="padding-left: 2rem;">
-                     <div class="commentHead">
-                        <div class="commentHead1">
-                     
-                           <div class="commentName">test</div>
-                           <div class="commentDate">2024-04-01 12:45:23</div>
-                     
-                        </div>
-                  
-                        <div class="commentHead2">
-                     
-                           <div class="commentReply">답글</div>
-                        
-                           <div class="commentModify">수정</div>
-                           <div class="commentRemove">삭제</div>
-                        
-                           <div class="commentCancle" style="display:none;">취소</div>
-                     
-                        </div>
-                  
-                     </div>
-                     <div class="comment">
-                     
-                     <p>test</p>                     
-                     
-                     
-                     </div>
-                    </div>
-                          <hr class="sidebar-divider d-none d-md-block">
-                       </li>
-                       
-                       <li data-no="3" data-name="test" data-date="2024-04-01 12:45:30" data-parent="1">
-                         <div class="commentDiv" style="padding-left: 3rem;">
-                     <div class="commentHead">
-                        <div class="commentHead1">
-                     
-                           <div class="commentName">test</div>
-                           <div class="commentDate">2024-04-01 12:45:30</div>
-                     
-                        </div>
-                  
-                        <div class="commentHead2">
-                     
-                           <div class="commentReply">답글</div>
-                        
-                           <div class="commentModify">수정</div>
-                           <div class="commentRemove">삭제</div>
-                        
-                           <div class="commentCancle" style="display:none;">취소</div>
-                     
-                        </div>
-                  
-                     </div>
-                     <div class="comment">
-                     
-                     <p>@test test</p>                     
-                     
-                     
-                     </div>
-                    </div>
-                          <hr class="sidebar-divider d-none d-md-block">
-                       </li>
-                       
-                       <li data-no="5" data-name="test2" data-date="2024-04-01 12:46:53" data-parent="1">
-                         <div class="commentDiv" style="padding-left: 3rem;">
-                     <div class="commentHead">
-                        <div class="commentHead1">
-                     
-                           <div class="commentName">test2</div>
-                           <div class="commentDate">2024-04-01 12:46:53</div>
-                     
-                        </div>
-                  
-                        <div class="commentHead2">
-                     
-                           <div class="commentReply">답글</div>
-                        
-                           <div class="commentCancle" style="display:none;">취소</div>
-                     
-                        </div>
-                  
-                     </div>
-                     <div class="comment">
-                     
-                     <p>@test dddd</p>                     
-                     
-                     
-                     </div>
-                    </div>
-                          <hr class="sidebar-divider d-none d-md-block">
-                       </li>
-                       
-                       <li data-no="2" data-name="test" data-date="2024-04-01 12:45:26" data-parent="0">
-                         <div class="commentDiv" style="padding-left: 2rem;">
-                     <div class="commentHead">
-                        <div class="commentHead1">
-                     
-                           <div class="commentName">test</div>
-                           <div class="commentDate">2024-04-01 12:45:26</div>
-                     
-                        </div>
-                  
-                        <div class="commentHead2">
-                     
-                           <div class="commentReply">답글</div>
-                        
-                           <div class="commentModify">수정</div>
-                           <div class="commentRemove">삭제</div>
-                        
-                           <div class="commentCancle" style="display:none;">취소</div>
-                     
-                        </div>
-                  
-                     </div>
-                     <div class="comment">
-                     
-                     <p>test</p>                     
-                     
-                     
-                     </div>
-                    </div>
-                          <hr class="sidebar-divider d-none d-md-block">
-                       </li>
-                       
-                       <li data-no="4" data-name="test2" data-date="2024-04-01 12:46:49" data-parent="0">
-                         <div class="commentDiv" style="padding-left: 2rem;">
-                     <div class="commentHead">
-                        <div class="commentHead1">
-                     
-                           <div class="commentName">test2</div>
-                           <div class="commentDate">2024-04-01 12:46:49</div>
-                     
-                        </div>
-                  
-                        <div class="commentHead2">
-                     
-                           <div class="commentReply">답글</div>
-                        
-                           <div class="commentCancle" style="display:none;">취소</div>
-                     
-                        </div>
-                  
-                     </div>
-                     <div class="comment">
-                     
-                     <p>testddd</p>                     
-                     
-                     
-                     </div>
-                    </div>
-                          <hr class="sidebar-divider d-none d-md-block">
-                       </li>
+                       댓글 로딩중....
                        
                     </ul>
                    </form>
@@ -482,5 +328,8 @@
 
     <!-- login.js for logout-->
     <script src="/js/membership/login.js"></script>
+    <!-- contents and comments for post-->
+    <script src="/js/board/comment.js"></script>
+    <script src="/js/board/boardDetail.js"></script>
   </body>
 </html>

@@ -1,14 +1,17 @@
 package com.example.project.board.model.mapper;
 
 import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Mapper;
 
 import com.example.project.board.model.dto.Comment;
-
+@Mapper
 public interface CommentMapper {
 
 	Comment selectCommentById(long commentId);
 
-	List<Comment> selectCommentByPostId(long postId);
+	List<Map<String, Object>> selectCommentsByPostId(long postId);
 	
 	int insertComment(Comment comment);
 

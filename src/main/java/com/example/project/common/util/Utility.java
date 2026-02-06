@@ -44,4 +44,14 @@ public class Utility {
 		
 		
 	}
+	
+	public static Long toLong(Object value) {
+	    if (value == null) return null;
+
+	    if (value instanceof Number n) {
+	        return n.longValue();
+	    }
+
+	    return Long.valueOf(value.toString());
+	}
 }

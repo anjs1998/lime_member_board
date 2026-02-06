@@ -11,24 +11,46 @@
             resultType="com.example.project.board.model.dto.Comment">
         SELECT
             c.COMMENT_ID           AS commentId,
-            c.COMMENT_TIME         AS commentTime,
-            c.POST_ID              AS postId,
-            c.PARENT_COMMENT_ID    AS parentCommentId,
-            c.COMMENT_CONTENT      AS commentContent,
-            c.DELETED_AT           AS deletedAt,
-            c.MEMBER_ID            AS memberId,
-            m.MEMBER_NICKNAME      AS memberNickname
-        FROM COMMENT c
+            , c.COMMENT_TIME         AS commentTime
+            , c.POST_ID              AS postId
+            , c.PARENT_COMMENT_ID    AS parentCommentId
+            , c.COMMENT_CONTENT      AS commentContent
+            , c.DELETED_AT           AS deletedAt
+            , c.MEMBER_ID            AS memberId
+            , m.MEMBER_NICKNAME      AS memberNickname
+        FROM "COMMENT" c
         JOIN MEMBER m
           ON c.MEMBER_ID = m.MEMBER_ID
         WHERE c.COMMENT_ID = #{commentId}
           AND c.DELETED_AT IS NULL
     </select>
-
+	<select id="selectCommentsByPostId"
+        parameterType="long"
+        resultType="map">
+			           SELECT  	c.COMMENT_ID         AS "commentId"
+    							, c.COMMENT_TIME       AS "commentTime"
+    							, c.POST_ID            AS "postId"
+    							, c.PARENT_COMMENT_ID  AS "parentCommentId"
+    							, c.COMMENT_CONTENT    AS "commentContent"
+    							, c.DELETED_AT         AS "deletedAt"
+    							, c.MEMBER_ID          AS "memberId"
+    							, LEVEL                AS "depth"
+			  			
+  			             FROM 	"COMMENT" c
+  			
+  						 WHERE 	c.POST_ID = #{postId}
+    							AND c.DELETED_AT IS NULL
+    					
+    				START WITH	c.PARENT_COMMENT_ID IS NULL
+    				
+    				CONNECT BY 	NOCYCLE PRIOR c.COMMENT_ID = c.PARENT_COMMENT_ID
+    				
+    		 ORDER SIBLINGS BY	c.COMMENT_TIME ASC, c.COMMENT_ID ASC	
+	</select>
     <!-- 댓글 등록 -->
     <insert id="insertComment"
             parameterType="com.example.project.board.model.dto.Comment">
-        INSERT INTO COMMENT (
+        INSERT INTO "COMMENT" (
             COMMENT_ID,
             COMMENT_TIME,
             POST_ID,
@@ -48,7 +70,7 @@
 
     <!-- 댓글 수정 -->
     <update id="modifyComment">
-        UPDATE COMMENT
+        UPDATE "COMMENT"
         SET COMMENT_CONTENT = #{content}
         WHERE COMMENT_ID = #{commentId}
           AND DELETED_AT IS NULL
@@ -57,7 +79,7 @@
     <!-- 댓글 삭제 (소프트 삭제) -->
     <update id="deleteComment"
             parameterType="long">
-        UPDATE COMMENT
+        UPDATE "COMMENT"
         SET DELETED_AT = SYSTIMESTAMP
         WHERE COMMENT_ID = #{commentId}
     </update>
