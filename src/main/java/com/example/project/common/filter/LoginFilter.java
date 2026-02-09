@@ -51,7 +51,7 @@ public class LoginFilter implements Filter{
 		    
 		    uri.startsWith("/membership/login") || // 로그인 페이지
 		    uri.startsWith("/login") || // 로그인 ajax 요청
-		    
+		    uri.startsWith("/membership/register") ||
 		    uri.startsWith("/download") || // 게시글 파일 다운로드 요청
 		    
 		    uri.equals("/")

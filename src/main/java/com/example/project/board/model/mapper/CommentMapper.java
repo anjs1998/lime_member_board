@@ -19,6 +19,8 @@ public interface CommentMapper {
 
 	int deleteComment(long commentId);
 
+	long selectCommentWriter(long commentId);
+
 	
 	
 }

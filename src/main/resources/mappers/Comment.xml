@@ -35,10 +35,10 @@
     							, c.DELETED_AT         AS "deletedAt"
     							, c.MEMBER_ID          AS "memberId"
     							, LEVEL                AS "depth"
-			  			
+			  					, m.MEMBER_NICKNAME    AS "memberNickname"
   			             FROM 	"COMMENT" c
-  			
-  						 WHERE 	c.POST_ID = #{postId}
+  					LEFT JOIN	MEMBER m ON c.MEMBER_ID=m.MEMBER_ID
+  						WHERE 	c.POST_ID = #{postId}
     							AND c.DELETED_AT IS NULL
     					
     				START WITH	c.PARENT_COMMENT_ID IS NULL
@@ -60,9 +60,9 @@
         )
         VALUES (
             SEQ_COMMENT_ID.NEXTVAL,
-            SYSTIMESTAMP,
+            SYSDATE,
             #{postId},
-            #{parentCommentId},
+            #{parentCommentId, jdbcType=NUMERIC},
             #{commentContent},
             #{memberId}
         )
@@ -80,8 +80,10 @@
     <update id="deleteComment"
             parameterType="long">
         UPDATE "COMMENT"
-        SET DELETED_AT = SYSTIMESTAMP
+        SET DELETED_AT = SYSDATE
         WHERE COMMENT_ID = #{commentId}
     </update>
-
+	<select id="selectCommentWriter" parameterType="long">
+		SELECT MEMBER_ID FROM "COMMENT" WHERE COMMENT_ID = #{commentId}
+	</select>
 </mapper>

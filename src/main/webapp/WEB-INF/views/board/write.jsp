@@ -78,8 +78,8 @@
           >
             <div class="bg-white py-2 collapse-inner rounded">
               <h6 class="collapse-header">Login Screens:</h6>
-              <a class="collapse-item" href="login.html">Login</a>
-              <a class="collapse-item" href="membership.html">membership</a>
+              <a class="collapse-item" onclick="logout()">Logout</a>
+              <a class="collapse-item" href="/membership/register">membership</a>
             </div>
           </div>
         </li>
@@ -304,5 +304,7 @@
 
     <!-- for submitting new Post & limiting number of files-->
     <script src="/js/board/boardWrite.js"></script>
+    <!-- for logout-->
+    <script src="/js/membership/login.js"></script>
   </body>
 </html>

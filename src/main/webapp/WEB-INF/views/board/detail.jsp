@@ -78,8 +78,8 @@
           >
             <div class="bg-white py-2 collapse-inner rounded">
               <h6 class="collapse-header">Login Screens:</h6>
-              <a class="collapse-item" href="login.html">Login</a>
-              <a class="collapse-item" href="membership.html">membership</a>
+              <a class="collapse-item" onclick="logout()">Logout</a>
+              <a class="collapse-item" href="/membership/register">membership</a>
             </div>
           </div>
         </li>
@@ -329,6 +329,7 @@
     <!-- login.js for logout-->
     <script src="/js/membership/login.js"></script>
     <!-- contents and comments for post-->
+    <script src="/js/board/commentUtil.js"></script>
     <script src="/js/board/comment.js"></script>
     <script src="/js/board/boardDetail.js"></script>
   </body>

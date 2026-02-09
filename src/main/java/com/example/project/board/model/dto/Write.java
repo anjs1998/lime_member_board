@@ -31,6 +31,9 @@ public class Write {
     /** 작성자 닉네임*/
     private String memberNickname;
     
+    /**댓글 개수*/
+    private int commentCount;
+    
     /** 삭제일 (소프트 삭제용) */
     private LocalDateTime deletedAt;
 }

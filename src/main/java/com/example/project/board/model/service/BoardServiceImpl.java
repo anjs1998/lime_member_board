@@ -21,6 +21,7 @@ import com.example.project.board.model.dto.Pagination;
 import com.example.project.board.model.dto.Write;
 import com.example.project.board.model.dto.WriteFile;
 import com.example.project.board.model.mapper.BoardMapper;
+import com.example.project.board.model.mapper.CommentMapper;
 import com.example.project.common.util.Utility;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,15 +32,16 @@ import lombok.extern.slf4j.Slf4j;
 public class BoardServiceImpl implements BoardService{
 
 	@Autowired
-	private BoardMapper mapper;
-	
+	private BoardMapper boardMapper;
+	@Autowired
+	private CommentMapper commentMapper;
 	
 	
 	@Value("${file.web-path}")
 	private String webPath; // /images/board/
 	
 	@Value("${file.folder-path}")
-	private String folderPath; // C:/uploadFiles/board/
+	private String folderPath; // C:/upload/
 	
 
 	/**
@@ -51,7 +53,7 @@ public class BoardServiceImpl implements BoardService{
 		
 		
 		// 1. 삭제되지 않은 게시글 갯수 조회
-		int listCount = mapper.getListCount();
+		int listCount = boardMapper.getListCount();
 		
 		// 2. 1번 정보를 사용하여 Pagination 객채 생성
 		Pagination pagination = new Pagination(cp, listCount);
@@ -72,7 +74,7 @@ public class BoardServiceImpl implements BoardService{
 		int limit = pagination.getLimit();//기본 limit : 10개
 		int offset = (cp - 1) * limit;
 		RowBounds rowBounds = new RowBounds(offset, limit);
-		List<Write> writeList = mapper.selectWriteList(rowBounds);
+		List<Write> writeList = boardMapper.selectWriteList(rowBounds);
 		
 		// 4. 목록 조회 결과 + Pagination 객체를 Map으로 묶어서 반환
 		Map<String, Object> map = new HashMap<>();
@@ -87,14 +89,14 @@ public class BoardServiceImpl implements BoardService{
 	@Override
 	public Write getBoardDetail(long writeId) {
 		// TODO Auto-generated method stub
-		return mapper.selectWriteById(writeId);
+		return boardMapper.selectWriteById(writeId);
 	}
 	
 	/**글에 딸린 첨부파일 조회. 향후 기능 확장을 위해 List<WriteFile>을 다시 Map으로 감쌈.*/
 	@Override
 	public Map<String, Object> selectWriteFilesByWriteId(long writeId) {
 		// TODO Auto-generated method stub
-		List<WriteFile> files = mapper.selectFiles(writeId);
+		List<WriteFile> files = boardMapper.selectFiles(writeId);
 		Map<String, Object> map = new HashMap<>();
 		
 		map.put("files", files);
@@ -106,7 +108,7 @@ public class BoardServiceImpl implements BoardService{
 	public long insertBoardDetail(Write inputWrite, List<MultipartFile> files) throws Exception {
 		// 1. 제목, 본문 삽입 -> newWriteCount 에 삽입된 게시글 개수 return 
 
-		int newWriteCount = mapper.insertWrite(inputWrite); //Mybatis 내부 <selectkey>로 inputWrite 내부에 primary key값 자동주입.
+		int newWriteCount = boardMapper.insertWrite(inputWrite); //Mybatis 내부 <selectkey>로 inputWrite 내부에 primary key값 자동주입.
 		if(newWriteCount == 0) {
 			return 0l;
 		}
@@ -129,7 +131,7 @@ public class BoardServiceImpl implements BoardService{
 						.uploadFile(files.get(i))
 						.build();
 				uploadList.add(file); 
-				resultCount += mapper.insertFileOne(inputWriteId, file); // resultCount == 삽입된 행의 개수(본 for문으로 하나씩 늘어남) == uploadList.size()
+				resultCount += boardMapper.insertFileOne(inputWriteId, file); // resultCount == 삽입된 행의 개수(본 for문으로 하나씩 늘어남) == uploadList.size()
 				
 				log.debug("file inputWriteId: "+file.getPostId());
 				
@@ -185,7 +187,8 @@ public class BoardServiceImpl implements BoardService{
 		
 		log.debug("deletedFileIds.Size() : " + deletedFileIds.size() +" , " +"deleteResult: " + deleteResult);
 		//2. Write 제목, 본문 update(PostId만 그대로 유지)
-		mapper.updateWrite(inputWrite);
+		boardMapper.updateWrite(inputWrite);
+		
 		//3. 새 WriteFiles 목록 추가
 		if(newFiles.size() != 0) insertFiles(inputWrite.getPostId(), newFiles);
 		
@@ -197,8 +200,8 @@ public class BoardServiceImpl implements BoardService{
 		// TODO Auto-generated method stub
 		
 		//1. 글에 첨부파일이 있는지 조회
-		List<WriteFile> files = mapper.selectFiles(writeId);
-		if(files.size() == 0) return mapper.deleteWriteById(writeId);// 첨부파일 없으면 그냥  //3. 본문 WriteDto 삭제. 로 넘어감
+		List<WriteFile> files = boardMapper.selectFiles(writeId);
+		if(files.size() == 0) return boardMapper.deleteWriteById(writeId);// 첨부파일 없으면 그냥  //3. 본문 WriteDto 삭제. 로 넘어감
 		else {
 			//2. 첨부파일 삭제
 			List<Long> fileIds = new ArrayList();
@@ -209,7 +212,7 @@ public class BoardServiceImpl implements BoardService{
 			}
 			deleteFiles(writeId, fileIds);
 			//3. 본문 WriteDto 삭제.
-			return mapper.deleteWriteById(writeId);
+			return boardMapper.deleteWriteById(writeId);
 		}
 		
 		
@@ -225,7 +228,7 @@ public class BoardServiceImpl implements BoardService{
 	@Override
 	public WriteFile selectFileOne(long fileId) throws Exception{
 		
-		return mapper.selectFileOne(fileId);
+		return boardMapper.selectFileOne(fileId);
 	}
 	@Override
 	public int insertFiles(long postId, List<MultipartFile> files) throws Exception {
@@ -245,7 +248,7 @@ public class BoardServiceImpl implements BoardService{
 							.uploadFile(files.get(i))
 							.build();
 					uploadList.add(file);
-					resultCount += mapper.insertFileOne(postId, file);
+					resultCount += boardMapper.insertFileOne(postId, file);
 					log.debug("file inputWriteId: "+file.getPostId());
 					
 				}
@@ -301,7 +304,7 @@ public class BoardServiceImpl implements BoardService{
 
         // 1️. 삭제 대상 파일 메타 조회
         List<WriteFile> files =
-                mapper.selectFilesByPostIdAndFileIds(postId, deletedFileIds);
+        		boardMapper.selectFilesByPostIdAndFileIds(postId, deletedFileIds);
        
         // 2️. 실제 파일 삭제
         for (WriteFile file : files) {
@@ -320,7 +323,7 @@ public class BoardServiceImpl implements BoardService{
         }
 
         // 3️. DB 삭제
-        int result = mapper.deleteFilesByPostIdAndFileIds(postId, deletedFileIds);
+        int result = boardMapper.deleteFilesByPostIdAndFileIds(postId, deletedFileIds);
         
         //4. 삭제된 파일 개수 return
         return result;

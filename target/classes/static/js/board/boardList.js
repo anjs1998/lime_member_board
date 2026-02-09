@@ -37,7 +37,7 @@ async function loadWriteList(page = 1) {
           const nickname = row.memberNickname ?? "익명";
           const title = row.postTitle ?? "(제목 없음)";
           const postId = row.postId; // 숫자라 가정
-          const commentCount = row.commentCount ?? 0;
+          const commentCount = row.commentCount ?? "error";
 
           // 날짜 포맷: "2026-01-26T09:10:00" 또는 "2026-01-26" 등 들어올 수 있음
           const dateText =  new Date(row.postDate).toLocaleDateString("ko-KR");

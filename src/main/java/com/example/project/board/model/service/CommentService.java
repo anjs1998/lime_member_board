@@ -11,4 +11,5 @@ public interface CommentService {
 	int insertComment(Comment comment);
 	int modifyComment(long commentId, String content);
 	int deleteComment(long commentId);
+	long selectCommentWriter(long commentId);
 }

@@ -44,7 +44,7 @@ public class CommentServiceImpl implements CommentService{
 		map.put("comments", comments);
 		
 		return map;
-		// 댓글 트리 구조는 frontend에서 구현.
+		// 댓글 트리 구조는 mapper에서 구현.
 	}
 
 	@Override
@@ -89,5 +89,9 @@ public class CommentServiceImpl implements CommentService{
 	    }
 
 	    return comments;
+	}
+	@Override
+	public long selectCommentWriter(long commentId) {
+	    return mapper.selectCommentWriter(commentId);
 	}
 }

@@ -35,17 +35,28 @@
        - 최신글이 위로 오도록 정렬
   -->
   <select id="selectWriteList" resultMap="writeMap">
-    SELECT POST_ID
-         , POST_TITLE
-         , POST_CONTENT
-         , POST_DATE
-         , w.MEMBER_ID
-     	 , m.MEMBER_NICKNAME
-         , DELETED_AT
-      FROM "WRITE" w
-      JOIN MEMBER m ON w.MEMBER_ID = m.MEMBER_ID
-     WHERE DELETED_AT IS NULL
-  ORDER BY POST_DATE DESC
+         SELECT w.POST_ID
+         		, w.POST_TITLE
+         		, w.POST_CONTENT
+         		, w.POST_DATE
+         		, w.MEMBER_ID
+     	 		, m.MEMBER_NICKNAME
+     	 		, COUNT(c.COMMENT_ID) AS COMMENT_COUNT
+         		, w.DELETED_AT
+      	   FROM "WRITE" w
+           JOIN MEMBER m ON w.MEMBER_ID = m.MEMBER_ID
+      LEFT JOIN "COMMENT" c 
+      			ON w.POST_ID = c.POST_ID
+      			AND c.DELETED_AT IS NULL   
+          WHERE w.DELETED_AT IS NULL
+       GROUP BY w.POST_ID
+    			, w.POST_TITLE
+    			, w.POST_CONTENT
+    			, w.POST_DATE
+    			, w.MEMBER_ID
+    			, m.MEMBER_NICKNAME
+    			, w.DELETED_AT
+  	   ORDER BY w.POST_DATE DESC
   </select>
     <!-- 게시글 등록
        - POST_ID: 시퀀스 사용 가정 (SEQ_POST_ID.NEXTVAL)
