@@ -9,11 +9,11 @@ import com.example.project.board.model.dto.Comment;
 @Mapper
 public interface CommentMapper {
 
-	Comment selectCommentById(long commentId);
+	Map<String, Object> selectCommentById(long commentId);
 
 	List<Map<String, Object>> selectCommentsByPostId(long postId);
 	
-	int insertComment(Comment comment);
+	long insertComment(Comment comment);
 
 	int modifyComment(long commentId, String content);
 

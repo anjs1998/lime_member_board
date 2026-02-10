@@ -20,7 +20,7 @@ public class CommentServiceImpl implements CommentService{
 	@Autowired
 	public CommentMapper mapper;
 	@Override
-	public Comment selectCommentById(long commentId) {
+	public Map<String, Object> selectCommentById(long commentId) {
 		// TODO Auto-generated method stub
 		return mapper.selectCommentById(commentId);
 	}
@@ -47,9 +47,11 @@ public class CommentServiceImpl implements CommentService{
 		// 댓글 트리 구조는 mapper에서 구현.
 	}
 
+	/**@return :방금 삽입된 DTO의 id를 return
+	 * */
 	@Override
-	public int insertComment(Comment comment) {
-		// TODO Auto-generated method stub
+	public long insertComment(Comment comment) {
+		// 
 		return mapper.insertComment(comment);
 	}
 

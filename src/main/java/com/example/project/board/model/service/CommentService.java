@@ -6,9 +6,9 @@ import java.util.Map;
 import com.example.project.board.model.dto.Comment;
 
 public interface CommentService {
-	Comment selectCommentById(long commentId);
+	Map<String, Object> selectCommentById(long commentId);
 	Map<String, Object> selectCommentsByPostId(long postId, long loginMemberId);
-	int insertComment(Comment comment);
+	long insertComment(Comment comment);
 	int modifyComment(long commentId, String content);
 	int deleteComment(long commentId);
 	long selectCommentWriter(long commentId);

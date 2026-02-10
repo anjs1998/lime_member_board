@@ -8,16 +8,16 @@
     <!-- 댓글 단일 조회 -->
     <select id="selectCommentById"
             parameterType="long"
-            resultType="com.example.project.board.model.dto.Comment">
+            resultType="map">
         SELECT
-            c.COMMENT_ID           AS commentId,
-            , c.COMMENT_TIME         AS commentTime
-            , c.POST_ID              AS postId
-            , c.PARENT_COMMENT_ID    AS parentCommentId
-            , c.COMMENT_CONTENT      AS commentContent
-            , c.DELETED_AT           AS deletedAt
-            , c.MEMBER_ID            AS memberId
-            , m.MEMBER_NICKNAME      AS memberNickname
+            c.COMMENT_ID           AS "commentId"
+            , c.COMMENT_TIME         AS "commentTime"
+            , c.POST_ID              AS "postId"
+            , c.PARENT_COMMENT_ID    AS "parentCommentId"
+            , c.COMMENT_CONTENT      AS "commentContent"
+            , c.DELETED_AT           AS "deletedAt"
+            , c.MEMBER_ID            AS "memberId"
+            , m.MEMBER_NICKNAME      AS "memberNickname"
         FROM "COMMENT" c
         JOIN MEMBER m
           ON c.MEMBER_ID = m.MEMBER_ID
@@ -32,14 +32,20 @@
     							, c.POST_ID            AS "postId"
     							, c.PARENT_COMMENT_ID  AS "parentCommentId"
     							, c.COMMENT_CONTENT    AS "commentContent"
-    							, c.DELETED_AT         AS "deletedAt"
+    							
+    							, CASE
+						            WHEN c.DELETED_AT IS NOT NULL
+						            THEN NULL
+						            ELSE c.COMMENT_CONTENT
+						          END                 AS "commentContent"
+						          
     							, c.MEMBER_ID          AS "memberId"
     							, LEVEL                AS "depth"
 			  					, m.MEMBER_NICKNAME    AS "memberNickname"
   			             FROM 	"COMMENT" c
   					LEFT JOIN	MEMBER m ON c.MEMBER_ID=m.MEMBER_ID
   						WHERE 	c.POST_ID = #{postId}
-    							AND c.DELETED_AT IS NULL
+    							--AND c.DELETED_AT IS NULL--
     					
     				START WITH	c.PARENT_COMMENT_ID IS NULL
     				
@@ -50,6 +56,14 @@
     <!-- 댓글 등록 -->
     <insert id="insertComment"
             parameterType="com.example.project.board.model.dto.Comment">
+            
+                <!-- 1️⃣ INSERT 전에 시퀀스 값 뽑기. -->
+	    <selectKey keyProperty="commentId"
+	               resultType="long"
+	               order="BEFORE">
+	        SELECT SEQ_COMMENT_ID.NEXTVAL FROM DUAL
+	    </selectKey>
+
         INSERT INTO "COMMENT" (
             COMMENT_ID,
             COMMENT_TIME,
@@ -59,7 +73,7 @@
             MEMBER_ID
         )
         VALUES (
-            SEQ_COMMENT_ID.NEXTVAL,
+            #{commentId},
             SYSDATE,
             #{postId},
             #{parentCommentId, jdbcType=NUMERIC},

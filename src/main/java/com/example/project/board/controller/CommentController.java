@@ -43,7 +43,12 @@ public class CommentController {
 	
 	
 	  // 1) 댓글 등록
+	
+	/**
+	 * @return : 성공여부 (success), (성공시에만)삽입된 comment 전체 DTO(commentDto) 
+	 * **/
     @PostMapping("/comment/insert")
+    @ResponseBody
     public Map<String, Object> insertComment(
             @RequestBody Comment inputComment,
             @SessionAttribute("loginMember") Member loginMember
@@ -58,12 +63,25 @@ public class CommentController {
         comment.setMemberNickname(loginMember.getMemberNickname());
         
         log.debug("inputComment : " + comment.toString());
-        int result = service.insertComment(comment);
+        long result = service.insertComment(comment);
+        
+        if(result > 0) {
+        	log.debug("comment.getCommentId() : " + comment.getCommentId());
+            Map<String, Object> newComment = service.selectCommentById(comment.getCommentId());
+            newComment.put("isOwner", true);
+            return Map.of(
+                    "success", true,
+                    "newComment", newComment
+            );
+        
+        }else {
+        	return Map.of(
+                        "success", false,
+                        "message", "처리에 실패했습니다."
+                    );
+        	
+        }
 
-        return Map.of(
-                "success", result > 0,
-                "result", result
-        );
     }
 
     // 2) 댓글 수정
@@ -88,18 +106,31 @@ public class CommentController {
                     ));
         }
         int result = service.modifyComment(commentId, inputComment.getCommentContent());
-
-        return ResponseEntity.ok(
-                Map.of(
-                        "success", result > 0,
-                        "result", result
-                )
-        );
+        if(result > 0) {
+            Map<String, Object> newComment = service.selectCommentById(inputComment.getCommentId());
+            newComment.put("isOwner", true);
+            return ResponseEntity.ok(
+                    Map.of(
+                            "success", result > 0,
+                            "newComment", newComment
+                    )
+            );
+        
+        }else {
+        	return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(Map.of(
+                            "success", false,
+                            "message", "처리에 실패했습니다."
+                        ));
+            	
+        	
+        }
     }
-
+    
     // 3) 댓글 삭제
     @PostMapping("/comment/delete")
-    public ResponseEntity<Map<String, Object>> deleteComment(
+    public ResponseEntity<Map<String, Object>> deleteComment (
             @PathVariable(value="commentId", required = true) long commentId,
             @SessionAttribute("loginMember") Member loginMember
     ) {
@@ -119,13 +150,25 @@ public class CommentController {
                     ));
         }
         int result = service.deleteComment(commentId);
+        
+        if(result > 0) {
 
+            return ResponseEntity.ok(
+                    Map.of(
+                            "success", result > 0,
+                            "result", result
+                    )
+            );
+        	
+        }else {
+        	return ResponseEntity
+                    .badRequest()
+                    .body(Map.of(
+                        "success", false,
+                        "message", "처리에 실패했습니다."
+                    ));
+        	
+        }
 
-        return ResponseEntity.ok(
-                Map.of(
-                        "success", result > 0,
-                        "result", result
-                )
-        );
     }
 }

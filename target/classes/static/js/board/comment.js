@@ -69,11 +69,7 @@ function renderComments(comments) { // 사용시 loadComments(renderComments(com
     const padding = parentId === 0 ? "2rem" : `${depth + 2}rem`
 
     const li = document.createElement("li");
-    li.dataset.id = commentId;
-    li.dataset.nickname = nickname;
-    li.dataset.date = date;
-    li.dataset.memberId = memberId;
-    li.dataset.parentCommentId = parentId;
+
 
     
 
@@ -110,13 +106,27 @@ function renderComments(comments) { // 사용시 loadComments(renderComments(com
       </div>
       <hr class="sidebar-divider d-none d-md-block">
     `;
+    
+
+    const commentDiv = li.querySelector('div[class = "commentDiv"]');
+    if(commentDiv !== null){
+      commentDiv.dataset.id = commentId;
+      commentDiv.dataset.nickname = nickname;
+      commentDiv.dataset.date = date;
+      commentDiv.dataset.memberId = memberId;
+      commentDiv.dataset.parentCommentId = parentId;
+      li.dataset.depth =  depth;
+    }else{
+      console.log("error : commentDiv does not exist on current commentId : ", commentId);
+
+    }
 
     ul.appendChild(li);
 
             /**/ 
     function getParentNicknameFromId(parentMemberId){
 
-      const parent = ul.querySelector(`li[data-id="${parentMemberId}"]`);
+      const parent = ul.querySelector(`div.commentDiv[data-id="${parentMemberId}"]`);
       if (!parent) return null;
 
       return parent.dataset.nickname;
@@ -155,7 +165,7 @@ function getPostIdFromUrl() {
 /**************************************************************************************** */
 
 
-async function insertCommentHandler(e) {
+async function insertNewCommentEvent(e) {
   const btn = e.target;
   if (!btn.classList.contains("commentSubmit")) return;
 
