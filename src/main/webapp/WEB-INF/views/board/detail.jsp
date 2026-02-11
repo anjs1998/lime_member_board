@@ -232,11 +232,13 @@
                    
                      
                   <form action="#" class="flex" id="commentForm" name="commentForm">
-                      <input type="hidden" name="boardNo" value="1">
-                       <textarea id="a3" cols="30" row="5" name="commentContent" class="form-control flex" style="width: 90%" placeholder="내용
+                      <input type="hidden" name="postId">
+                       <textarea id="a3" cols="30" row="5" name="content" class="form-control flex" style="width: 90%" placeholder="내용
                          "></textarea>
                        <a href="#" class="commentAdd flex" style="width: 9%">
-                         <button type="button" class="btn btn-primary btn ml-1" style="margin-top: 0.75rem;width: 100%">등록</button>
+                         <button type="button" class="btn btn-primary btn ml-1" 
+                         style="margin-top: 0.75rem;width: 100%"
+                         onclick = "submitCommentHandler(event)">등록</button>
                        </a>
                   </form>
                      

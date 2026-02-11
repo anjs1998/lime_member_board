@@ -96,7 +96,14 @@ function renderComments(comments) { // 사용시 loadComments(renderComments(com
         </div>
 
         <div class="comment">
-          <p> ${parentId ? "@" +  getParentNicknameFromId(parentId) : ""} ${escapeHtml(content)}</p>
+          <p>
+            ${
+              parentId
+                ? `<span class="reply-target">@${escapeHtml(getParentNicknameFromId(parentId))}</span> `
+                : ""
+            }
+            <span class="comment-text">${escapeHtml(content)}</span>
+          </p>
         </div>
 
         <div class="commentEditor" style="display:none;"> 
@@ -124,9 +131,9 @@ function renderComments(comments) { // 사용시 loadComments(renderComments(com
     ul.appendChild(li);
 
             /**/ 
-    function getParentNicknameFromId(parentMemberId){
+    function getParentNicknameFromId(parentCommentId){
 
-      const parent = ul.querySelector(`div.commentDiv[data-id="${parentMemberId}"]`);
+      const parent = ul.querySelector(`div.commentDiv[data-id="${parentCommentId}"]`);
       if (!parent) return null;
 
       return parent.dataset.nickname;

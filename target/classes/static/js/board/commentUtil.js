@@ -10,15 +10,15 @@ function bindCommentActionEvents() {
 
   commentDiv.addEventListener("click", async (e) => {
     const target = e.target;
-    console.log("target : ", e.target);
+    /*console.log("target : ", e.target);*/
     
     const commentItem = target.closest(".commentDiv");
-    console.log("target.closest(.commentDiv) : ", commentItem);
+    /*console.log("target.closest(.commentDiv) : ", commentItem);*/
     if (!commentItem) return;
 
     const editor = commentItem.querySelector(".commentEditor");
     const cancelBtn = commentItem.querySelector(".commentCancle");
-    const contentDiv = commentItem.querySelector(".commentContent");
+    const contentDiv = commentItem.querySelector(".comment");
 
     // editor 없는 구조면 처리 불가
     if (!editor) return;
@@ -43,8 +43,11 @@ function bindCommentActionEvents() {
     if (target.classList.contains("commentModify")) {
       closeAllEditors();
       editor.style.display = "block";
+      contentDiv.style.display="none"; // contentDiv 숨기고 textarea를 show
       cancelBtn && (cancelBtn.style.display = "inline-block");
-      textarea.value = (contentDiv ? contentDiv.innerText : "");
+      const content = contentDiv?.querySelector(".comment-text").innerText || "";
+      textarea.value = content;
+      //textarea.value = (contentDiv ? contentDiv.innerText : "");
       textarea.placeholder = "댓글 수정";
       editor.dataset.mode = "modify";
       return;
@@ -80,11 +83,16 @@ function bindCommentActionEvents() {
         if(newComment !== null){
           closeAllEditors();
           insertNewCommentAsync(newComment);
-
+          
+          
         }
       } else if (mode === "modify") {
         console.log("mode : " , mode);
-        await modifyComment(commentId, content);
+        const modifiedComment = await modifyComment(commentId, content);
+        if(modifiedComment){
+          modifyCommentAsync(modifiedComment, commentItem, getParentNicknameFromId(commentItem.dataset.parentId));
+          contentDiv.style.display="block"; // contentDiv 숨기고 textarea를 show
+        }
       } else {
         // mode가 비어있으면 뭔지 모르는 상태라 그냥 무시
         console.log("mode : " , mode);
@@ -93,6 +101,15 @@ function bindCommentActionEvents() {
 
       closeAllEditors();
       //await reloadComments();
+
+      function getParentNicknameFromId(parentMemberId){
+
+        const parent = target.querySelector(`div.commentDiv[data-id="${parentMemberId}"]`);
+        if (!parent) return null;
+
+        return parent.dataset.nickname;
+
+      }
     }
   });
 
@@ -110,7 +127,71 @@ function closeAllEditors() {
 }
 
 /************댓글 CRUD용 ajax요청보내는 함수들.**************************************************************** */
+async function submitCommentHandler(event) {
+  event.preventDefault(); // a 태그 / 버튼 기본 동작 막기
 
+
+  const form = document.getElementById("commentForm");
+  form.querySelector('input[name="postId"]').value = getPostIdFromUrl();
+  const postId = form.querySelector('input[name="postId"]').value;
+  const content = form.querySelector('textarea[name="content"]').value.trim();
+
+  if (!content) {
+    alert("댓글 내용을 입력해주세요.");
+    return;
+  }
+
+  $.ajax({
+    url: "/comment/insert",
+    type: "POST",
+    contentType: "application/json; charset=UTF-8",
+    data: JSON.stringify({ postId :  getPostIdFromUrl(),
+      parentCommentId: null,
+      commentContent : content }),
+    success: function (res) {
+      // 성공 시
+      form.querySelector('textarea[name="content"]').value = "";
+      
+      // 필요하면 댓글 다시 로딩
+      // loadComments(postId);
+
+      const {success, newComment} = res;
+      if(success == true){
+        insertNewCommentAsync(newComment);
+
+      }
+      
+      
+      
+      async function loadComments(postId = getPostIdFromUrl()) {
+        if (!postId) {
+          console.error("postId가 없습니다.");
+          return [];
+        }
+
+        try {
+          const commentList = await $.ajax({
+            url: "/comments",
+            type: "GET",
+            dataType: "json",
+            data: { postId }
+          });
+
+          //return Array.isArray(commentList) ? commentList : [];
+          return commentList.comments;
+        } catch (err) {
+          console.error("댓글 조회 실패:", err);
+          return [];
+        }
+}
+      console.log("댓글 등록 성공", res);
+    },
+    error: function (err) {
+      console.error("댓글 등록 실패", err);
+      alert("댓글 등록 중 오류가 발생했습니다.");
+    }
+  });
+}
 // 댓글 등록
 async function insertComment({ parentCommentId = 0, content }) {
 
@@ -203,17 +284,11 @@ function getPostIdFromUrl() {
   const params = new URLSearchParams(window.location.search);
   return params.get("postId");
 }
-/*
-function reloadComments(){
 
-
-
-
-}*/
-
+/*비동기로 댓글 삽입 결과를 보여주는 함수.*/ 
 function insertNewCommentAsync(commentDto) {
   if (!commentDto) return;
-
+  console.log(commentDto);
   const {
     commentId,
     memberId,
@@ -230,66 +305,199 @@ function insertNewCommentAsync(commentDto) {
   const parentId = parentCommentId ?? 0;
   const content = commentContent || "";
   const owner = !!isOwner;
-  const d = depth ?? 0;
+  const d = depth ?? 0; 
 
   const padding = parentId === 0 ? "2rem" : `${d + 2}rem`;
 
   // 🔹 부모 댓글 li,div 찾기 (data-no 기준)
   
   const parentDiv = document.querySelector(`div.commentDiv[data-id="${parentId}"]`);
-  const parentLi = parentDiv.closest("li");;
+
   if (!parentDiv) {
     console.warn("부모 댓글을 찾지 못했습니다:", parentId);
+        
+    const ul = document.getElementById("commentDiv");
+    if (!ul){ console.log("commentDiv를 찾을수 없습니다.");return;} 
+    // 🔹 새 li 생성
+    const li = document.createElement("li");
+
+
+    li.innerHTML = `
+      <div class="commentDiv" style="padding-left: ${d + 2}rem;">
+        <div class="commentHead">
+          <div class="commentHead1">
+            <div class="commentName">${escapeHtml(nickname)}</div>
+            <div class="commentDate">${escapeHtml(date)}</div>
+          </div>
+
+          <div class="commentHead2">
+            <div class="commentReply">답글</div>
+            ${
+              owner
+                ? `<div class="commentModify">수정</div>
+                  <div class="commentRemove">삭제</div>`
+                : ``
+            }
+            <div class="commentCancle" style="display:none;">취소</div>
+          </div>
+        </div>
+
+        <div class="comment">
+          <p>
+            ${
+              parentId
+                ? `<span class="reply-target">@${escapeHtml(getParentNicknameFromId(parentCommentId))}</span> `
+                : ""
+            }
+            <span class="comment-text">${escapeHtml(content)}</span>
+          </p>
+        </div>
+
+        <div class="commentEditor" style="display:none;">
+          <textarea class="commentTextarea"></textarea>
+          <button class="commentSubmit">확인</button>
+        </div>
+      </div>
+      <hr class="sidebar-divider d-none d-md-block">
+    `;
+
+
+    const commentDiv = li.querySelector('div[class = "commentDiv"]');
+    if(commentDiv !== null){
+      commentDiv.dataset.id = commentId;
+      commentDiv.dataset.nickname = nickname;
+      commentDiv.dataset.date = date;
+      commentDiv.dataset.memberId = memberId;
+      commentDiv.dataset.parentCommentId = parentId;
+      li.dataset.depth =  d;
+    }else{
+      console.log("error : commentDiv does not exist on current commentId : ", commentId);
+
+    }
+
+    ul.appendChild(li);
     return;
+  }else{
+    console.log("parentDiv : ", parentDiv);
+    const parentLi = parentDiv.closest("li");;
+
+
+    // 🔹 새 li 생성
+    const li = document.createElement("li");
+
+
+    li.innerHTML = `
+      <div class="commentDiv" style="padding-left: ${Number(parentLi.dataset.depth) + 3}rem;">
+        <div class="commentHead">
+          <div class="commentHead1">
+            <div class="commentName">${escapeHtml(nickname)}</div>
+            <div class="commentDate">${escapeHtml(date)}</div>
+          </div>
+
+          <div class="commentHead2">
+            <div class="commentReply">답글</div>
+            ${
+              owner
+                ? `<div class="commentModify">수정</div>
+                  <div class="commentRemove">삭제</div>`
+                : ``
+            }
+            <div class="commentCancle" style="display:none;">취소</div>
+          </div>
+        </div>
+
+        <div class="comment">
+          <p>
+            ${parentId ? "@" + parentDiv.dataset.nickname : ""}
+            ${escapeHtml(content)}
+          </p>
+        </div>
+
+        <div class="commentEditor" style="display:none;">
+          <textarea class="commentTextarea"></textarea>
+          <button class="commentSubmit">확인</button>
+        </div>
+      </div>
+      <hr class="sidebar-divider d-none d-md-block">
+    `;
+
+    // 🔹 부모 댓글 바로 아래에 삽입
+    parentLi.after(li);
+    const liDiv = li.querySelector('div.commentDiv');
+    liDiv.dataset.id = commentId;
+    liDiv.dataset.parent = parentId;
+    li.dataset.depth = (
+                        Number(parentLi.dataset.depth) + 1
+                        ).toString();
+    liDiv.dataset.nickname = nickname;        
   }
 
-  // 🔹 새 li 생성
-  const li = document.createElement("li");
 
 
-  li.innerHTML = `
-    <div class="commentDiv" style="padding-left: ${Number(parentLi.dataset.depth) + 3}rem;">
-      <div class="commentHead">
-        <div class="commentHead1">
-          <div class="commentName">${escapeHtml(nickname)}</div>
-          <div class="commentDate">${escapeHtml(date)}</div>
-        </div>
 
-        <div class="commentHead2">
-          <div class="commentReply">답글</div>
-          ${
-            owner
-              ? `<div class="commentModify">수정</div>
-                 <div class="commentRemove">삭제</div>`
-              : ``
-          }
-          <div class="commentCancle" style="display:none;">취소</div>
-        </div>
-      </div>
+    function getParentNicknameFromId(parentCommentId){
 
-      <div class="comment">
-        <p>
-          ${parentId ? "@" + parentDiv.dataset.nickname : ""}
-          ${escapeHtml(content)}
-        </p>
-      </div>
+    const parent = ul.querySelector(`div.commentDiv[data-id="${parentCommentId}"]`);
+    if (!parent) return null;
 
-      <div class="commentEditor" style="display:none;">
-        <textarea class="commentTextarea"></textarea>
-        <button class="commentSubmit">확인</button>
-      </div>
-    </div>
-    <hr class="sidebar-divider d-none d-md-block">
-  `;
+    return parent.dataset.nickname;
 
-  // 🔹 부모 댓글 바로 아래에 삽입
-  parentLi.after(li);
-  const liDiv = li.querySelector('div.commentDiv');
-  liDiv.dataset.id = commentId;
-  liDiv.dataset.parent = parentId;
-  li.dataset.depth = (
-  Number(parentLi.dataset.depth) + 1
-).toString();
-  liDiv.dataset.nickname = nickname;        
-  
+  }
+}
+/*비동기로 댓글 수정 결과를 보여주는 함수.
+@param : parentNickname --> parentDiv.dataset.nickname
+*/ 
+
+/*
+function modifyCommentAsync(commentDto, commentDiv, parentNickname){ 
+  if (!commentDto) return;
+  console.log("commentDto", commentDto);
+
+
+  const {
+    commentId,
+    memberId,
+    memberNickname,
+    commentTime,
+    parentCommentId,
+    commentContent,
+    isOwner,
+    depth
+  } = commentDto;
+
+  const divBody = commentDiv.querySelector("div.comment");
+  const p = divBody.querySelector("p");
+p.textContent =
+  `${parentCommentId ? "@" + (parentNickname ?? "") : ""}\n` +
+  `${commentContent ?? ""}`;
+  return;
+}
+*/
+function modifyCommentAsync(commentDto, commentDiv, parentNickname) {
+  if (!commentDto || !commentDiv) return;
+
+
+  console.log("commentDto : ", commentDto
+    , ", commentDiv : ", commentDiv
+    , ", parentNickname : ", parentNickname
+  )
+  const { parentCommentId, commentContent } = commentDto;
+
+  const p = commentDiv.querySelector("div.comment > p");
+  if (!p) return;
+
+  // @닉네임 + 내용 구성
+  const mention = parentCommentId ? `@${parentNickname ?? ""} ` : "";
+
+  // ✅ innerHTML을 쓸 거면 escapeHtml 필요
+p.innerHTML = `
+  ${mention 
+    ? `<span class="reply-target">${escapeHtml(mention)}</span> `
+    : ""
+  }
+  <span class="comment-text">${escapeHtml(commentContent ?? "")}</span>
+`;
+
+  // 또는 ✅ textContent로 가면 escapeHtml 필요 없음 (대신 줄바꿈/공백 표현은 제한)
+  // p.textContent = `${mention}${commentContent ?? ""}`;
 }

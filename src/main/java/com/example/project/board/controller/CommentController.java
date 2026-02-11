@@ -86,8 +86,9 @@ public class CommentController {
 
     // 2) 댓글 수정
     @PostMapping("/comment/modify")
+    @ResponseBody
     public ResponseEntity<Map<String, Object>> modifyComment(
-            @PathVariable(value="commentId", required = true) long commentId,
+            @RequestParam(value="commentId", required = true) long commentId,
             @RequestBody Comment inputComment,
             @SessionAttribute("loginMember") Member loginMember
     ) {
@@ -107,7 +108,7 @@ public class CommentController {
         }
         int result = service.modifyComment(commentId, inputComment.getCommentContent());
         if(result > 0) {
-            Map<String, Object> newComment = service.selectCommentById(inputComment.getCommentId());
+            Map<String, Object> newComment = service.selectCommentById(commentId);
             newComment.put("isOwner", true);
             return ResponseEntity.ok(
                     Map.of(
