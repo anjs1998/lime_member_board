@@ -46,6 +46,7 @@ public class LoginFilter implements Filter{
 		    uri.startsWith("/css") ||
 		    uri.startsWith("/vendor") ||
 		    uri.startsWith("/js") ||
+		    uri.startsWith("/img") ||
 		    uri.startsWith("/images") ||
 		    uri.startsWith("/favicon.ico") ||
 		    

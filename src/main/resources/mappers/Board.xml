@@ -44,7 +44,7 @@
      	 		, COUNT(c.COMMENT_ID) AS COMMENT_COUNT
          		, w.DELETED_AT
       	   FROM "WRITE" w
-           JOIN MEMBER m ON w.MEMBER_ID = m.MEMBER_ID
+      LEFT JOIN MEMBER m ON w.MEMBER_ID = m.MEMBER_ID
       LEFT JOIN "COMMENT" c 
       			ON w.POST_ID = c.POST_ID
       			AND c.DELETED_AT IS NULL   

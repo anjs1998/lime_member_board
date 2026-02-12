@@ -42,6 +42,7 @@
     							, c.MEMBER_ID          AS "memberId"
     							, LEVEL                AS "depth"
 			  					, m.MEMBER_NICKNAME    AS "memberNickname"
+			  					, c.DELETED_AT 		   AS "deletedAt"
   			             FROM 	"COMMENT" c
   					LEFT JOIN	MEMBER m ON c.MEMBER_ID=m.MEMBER_ID
   						WHERE 	c.POST_ID = #{postId}

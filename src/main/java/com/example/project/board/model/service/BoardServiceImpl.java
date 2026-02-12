@@ -305,25 +305,26 @@ public class BoardServiceImpl implements BoardService{
         // 1️. 삭제 대상 파일 메타 조회
         List<WriteFile> files =
         		boardMapper.selectFilesByPostIdAndFileIds(postId, deletedFileIds);
-       
-        // 2️. 실제 파일 삭제
+        // 2. DB 삭제( DB -> 실파일 삭제 순으로 진행해야 DB에서 Exception 발생시 rollback 가능)
+        int result = boardMapper.deleteFilesByPostIdAndFileIds(postId, deletedFileIds);
+        // 3. 실제 파일 삭제
         for (WriteFile file : files) {
             Path fullPath = Paths.get(
             		folderPath,
-                    file.getPath(),
+                    
                     file.getFileNameSaved()
             );
 
             try {
                 boolean isDeleted = Files.deleteIfExists(fullPath);
+                if (!isDeleted) throw new RuntimeException("파일 삭제 실패: " + fullPath);
                 log.debug(file.getPath() + file.getFileNameSaved() + " deleted : " + isDeleted);
             } catch (IOException e) {
                 throw new RuntimeException("파일 삭제 실패: " + fullPath, e);
             }
         }
 
-        // 3️. DB 삭제
-        int result = boardMapper.deleteFilesByPostIdAndFileIds(postId, deletedFileIds);
+
         
         //4. 삭제된 파일 개수 return
         return result;

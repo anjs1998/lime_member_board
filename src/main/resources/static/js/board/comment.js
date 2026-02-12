@@ -1,22 +1,4 @@
-/**
- * comments: [
- *   {
- *     commentId,
- *     memberNickname,
- *     commentTime,
- *     parentCommentId, // null or number
- *     commentContent,
- *     isMine
- *   }
- * ]
- */
 
-
-/**
- * /comments?postId=... 로 댓글 목록을 가져온다.
- * 서버 반환: CommentDto 리스트(JSON 배열)
- * 예) [{ commentId, content, memberId, nickname, createdAt, ... }, ...]
- */
 
 document.addEventListener("DOMContentLoaded", async ()=>{
 
@@ -62,6 +44,7 @@ function renderComments(comments) { // 사용시 loadComments(renderComments(com
     const date = formatDate(c.commentTime);
     const parentId = c.parentCommentId ?? 0;
     const content = c.commentContent || "";
+    const isDeleted = !!c.deletedAt; //const isDeleted = c.deletedAt? true:false;
     const isOwner = !!c.isOwner;
     const depth = c.depth ?? 0;
 
@@ -77,42 +60,60 @@ function renderComments(comments) { // 사용시 loadComments(renderComments(com
       <div class="commentDiv" style="padding-left: ${padding};">
         <div class="commentHead">
           <div class="commentHead1">
-            <div class="commentName">${escapeHtml(nickname)}</div>
-            <div class="commentDate">${escapeHtml(date)}</div>
+          ${isDeleted
+          ? `<div class="commentName"></div>
+            <div class="commentDate"></div>`
+          : `<div class="commentName">${escapeHtml(nickname)}</div>
+            <div class="commentDate">${escapeHtml(date)}</div>`
+          }
+          
           </div>
+          ${isDeleted
+          ?  `<div class="commentHead2"></div>`
+          :  `<div class="commentHead2">
+              <div class="commentReply">답글</div>
+              ${
+                isOwner
+                  ? `<div class="commentModify">수정</div>
+                    <div class="commentRemove">삭제</div>`
+                  : ``
+              }
+              <div class="commentCancle" style="display:none;">취소</div>
+            </div>`
 
-          <div class="commentHead2">
-            <div class="commentReply">답글</div>
-            ${
-              isOwner
-                ? `<div class="commentModify">수정</div>
-                   <div class="commentRemove">삭제</div>`
-                : ``
+          }
+        </div>
+          ${isDeleted?
+              `<div class="comment">
+                  <p style="font-style: italic; color: gray;">
+                    댓글이 삭제되었습니다.
+                  </p>
+              </div>`
+
+              : 
+              `
+              <div class="comment">
+                <p>
+                  ${
+                    parentId
+                      ? `<span class="reply-target">@${escapeHtml(getParentNicknameFromId(parentId))}</span> `
+                      : ""
+                  }
+                  <span class="comment-text">${escapeHtml(content)}</span>
+                </p>
+              </div>`
+
             }
-            <div class="commentCancle" style="display:none;">취소</div>
-          </div>
-           
-
-        </div>
-
-        <div class="comment">
-          <p>
-            ${
-              parentId
-                ? `<span class="reply-target">@${escapeHtml(getParentNicknameFromId(parentId))}</span> `
-                : ""
-            }
-            <span class="comment-text">${escapeHtml(content)}</span>
-          </p>
-        </div>
-
-        <div class="commentEditor" style="display:none;"> 
-          <textarea class="commentTextarea"></textarea>
-          <button class="commentSubmit">확인</button>
-        </div>
+          ${isDeleted?
+            `<div class="commentEditor" style="display:none;"></div> `
+            : 
+            `<div class="commentEditor" style="display:none;"> 
+              <textarea class="commentTextarea"></textarea>
+              <button class="commentSubmit">확인</button>
+            </div>`
+          }
       </div>
-      <hr class="sidebar-divider d-none d-md-block">
-    `;
+      <hr class="sidebar-divider d-none d-md-block">`;
     
 
     const commentDiv = li.querySelector('div[class = "commentDiv"]');
@@ -130,13 +131,14 @@ function renderComments(comments) { // 사용시 loadComments(renderComments(com
 
     ul.appendChild(li);
 
-            /**/ 
+    /**/ 
     function getParentNicknameFromId(parentCommentId){
 
       const parent = ul.querySelector(`div.commentDiv[data-id="${parentCommentId}"]`);
       if (!parent) return null;
 
-      return parent.dataset.nickname;
+      if(!parent.dataset.nickname){ console.log("부모 댓글에서 nickname dataset을 찾을수 없습니다!");}
+      return parent.dataset.nickname ?? "";
 
     }
   });

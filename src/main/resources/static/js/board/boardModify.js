@@ -102,6 +102,12 @@ async function submitModify(){
     const postId = params.get("postId");
     console.log("formData : ", form);
     if(confirm("제출하시겠습니까?")){
+        /*
+        const resp = await updatePost(formData);
+        
+        
+        
+        */ 
         $.ajax({
         url: "/board/modify", 
         type: "POST",
@@ -118,11 +124,11 @@ async function submitModify(){
             } else {
             alert("게시글 수정 실패..");
             }
-        },
-        error: function (xhr) {
-            console.log(xhr.responseText);
-            alert("게시글 수정 오류.. 서버 요청 실패");
-        }
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+                alert("게시글 수정 오류.. 서버 요청 실패");
+            }
         });
 
 

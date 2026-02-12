@@ -131,8 +131,9 @@ public class CommentController {
     
     // 3) 댓글 삭제
     @PostMapping("/comment/delete")
+    @ResponseBody
     public ResponseEntity<Map<String, Object>> deleteComment (
-            @PathVariable(value="commentId", required = true) long commentId,
+            @RequestParam(value="commentId", required = true) long commentId,
             @SessionAttribute("loginMember") Member loginMember
     ) {
     	

@@ -197,4 +197,24 @@ public class BoardController {
 	        .contentLength(Files.size(path))
 	        .body(resource);
 	}
+	/**게시글 첨부파일 다운로드*/
+	@GetMapping("/download/profileImg")
+	public ResponseEntity<Resource> downloadProfileImg(@RequestParam(value="fileId", required = true) long fileId) throws Exception{
+	    
+		WriteFile downloadFile = service.selectFileOne(fileId);
+		
+		String fileNameSaved = downloadFile.getFileNameSaved();
+		Path path = Paths.get("C:/upload/" + fileNameSaved);
+	    Resource resource = new FileSystemResource(path);
+
+	    return ResponseEntity.ok()
+	        .header(HttpHeaders.CONTENT_DISPOSITION,
+	            ContentDisposition.attachment()
+	                .filename(fileNameSaved, StandardCharsets.UTF_8) // ✅ 한글/특수문자 안전
+	                .build()
+	                .toString()
+	        )
+	        .contentLength(Files.size(path))
+	        .body(resource);
+	}
 }

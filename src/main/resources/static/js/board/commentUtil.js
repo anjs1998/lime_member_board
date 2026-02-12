@@ -58,6 +58,7 @@ function bindCommentActionEvents() {
       editor.style.display = "none";
       cancelBtn && (cancelBtn.style.display = "none");
       editor.dataset.mode = "";
+      contentDiv.style.display="block";
       return;
     }
 
@@ -111,6 +112,19 @@ function bindCommentActionEvents() {
 
       }
     }
+    /* ✅ 삭제.*/ 
+    if (target.classList.contains("commentRemove")){
+
+      if(confirm("코멘트를 삭제하시겠습니까?")){
+
+        const result = await deleteComment(commentItem.dataset.id);
+        if(result){
+          alert("댓글이 삭제되었습니다!");
+          deleteCommentAsync(commentItem);
+
+        }
+      }
+    } 
   });
 
   
@@ -447,32 +461,6 @@ function insertNewCommentAsync(commentDto) {
 /*비동기로 댓글 수정 결과를 보여주는 함수.
 @param : parentNickname --> parentDiv.dataset.nickname
 */ 
-
-/*
-function modifyCommentAsync(commentDto, commentDiv, parentNickname){ 
-  if (!commentDto) return;
-  console.log("commentDto", commentDto);
-
-
-  const {
-    commentId,
-    memberId,
-    memberNickname,
-    commentTime,
-    parentCommentId,
-    commentContent,
-    isOwner,
-    depth
-  } = commentDto;
-
-  const divBody = commentDiv.querySelector("div.comment");
-  const p = divBody.querySelector("p");
-p.textContent =
-  `${parentCommentId ? "@" + (parentNickname ?? "") : ""}\n` +
-  `${commentContent ?? ""}`;
-  return;
-}
-*/
 function modifyCommentAsync(commentDto, commentDiv, parentNickname) {
   if (!commentDto || !commentDiv) return;
 
@@ -500,4 +488,20 @@ p.innerHTML = `
 
   // 또는 ✅ textContent로 가면 escapeHtml 필요 없음 (대신 줄바꿈/공백 표현은 제한)
   // p.textContent = `${mention}${commentContent ?? ""}`;
+}
+/*비동기로 댓글 삭제를 실행하는 함수.
+
+*/ 
+function deleteCommentAsync(commentDiv){
+  if(!commentDiv) return;
+  const commentHead2 = commentDiv.querySelector(".commentHead2");
+  const commentBody = commentDiv.querySelector(".comment");
+  const commentEditor = commentDiv.querySelector(".commentEditor");
+  
+  commentHead2.innerHTML = "";
+  commentBody.innerHTML = `<p style="font-style: italic; color: gray;">
+          댓글이 삭제되었습니다.
+        </p>`;
+  commentEditor.innerHTML = "";
+
 }
