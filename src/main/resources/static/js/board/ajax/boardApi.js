@@ -47,32 +47,46 @@ async function getWriteDetail(postId){
             uploadFiles : files
         }
     });
-        /*
-        error: function(xhr){
-            console.log(xhr.responseText);
-            alert("서버 요청 실패 : 글을 불러오지 못했습니다.");
 
-        }*/
     return detail;
 }
 
 async function updatePost(formdata){
-      $.ajax({
-        url: "/board/modify", 
-        type: "POST",
-        data: formdata,
-        processData: false,
-        contentType: false,
-        success: function (resp) {
-            // 서버가 "1"/"0" 같은 텍스트를 준다고 가정
-            return Number(resp);
+    try{
+        const resp = await $.ajax({
+            url: "/board/modify", 
+            type: "POST",
+            data: formdata,
+            processData: false,
+            contentType: false,
 
-          
-        },
-        error: function (xhr) {
-            console.log(xhr.responseText);
-            alert("게시글 수정 오류.. 서버 요청 실패");
-        }
-    });
+        });
+
+        return resp;
+    }catch(e){
+            console.log(e?.responseText ?? e);
+            return null; // 여기서 alert까지 하면 호출부에서 중복 alert 날 수 있음
+     }
+      
+}
+
+async function deletePost(postId){
+    try{
+        const resp = await $.ajax({
+                                    url: `/board/delete?postId=${postId}`, 
+                                    type: "POST",
+                                    
+                                    processData: false,
+                                    contentType: false,
+                                    })
+
+        
+
+        return resp;
+    }catch(e){
+            console.log(e?.responseText ?? e);
+            return null; // 여기서 alert까지 하면 호출부에서 중복 alert 날 수 있음
+     }
+
 
 }

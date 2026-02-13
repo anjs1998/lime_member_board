@@ -102,12 +102,28 @@ async function submitModify(){
     const postId = params.get("postId");
     console.log("formData : ", form);
     if(confirm("제출하시겠습니까?")){
-        /*
+        
         const resp = await updatePost(formData);
+        if(resp === null){
+            alert("게시글 수정 오류.. 서버 요청 실패"); return;
+        }else{
+            const result = Number(resp);
+            if(result > 0){
+                alert("게시글 수정 성공!");
+                location.href = `/write/detail?postId=${postId}`; // 메인으로
+            } else {
+                alert("게시글 수정 실패..");
+            }
+        }
+        
+
+
         
         
         
-        */ 
+
+
+        /* todo: 나중에 이 주석 전체를 지울것.
         $.ajax({
         url: "/board/modify", 
         type: "POST",
@@ -129,7 +145,7 @@ async function submitModify(){
                 console.log(xhr.responseText);
                 alert("게시글 수정 오류.. 서버 요청 실패");
             }
-        });
+        });*/
 
 
     }

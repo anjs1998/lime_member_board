@@ -206,7 +206,11 @@
 
     <!-- login.js for logout-->
     <script src="/js/membership/login.js"></script>
+    <!--ajax APIs-->
+    <script src="/js/board/ajax/boardApi.js"></script>
+    <script src="/js/board/ajax/commentApi.js"></script>
     <!-- contents and comments for post-->
+     
     <script src="/js/board/commentUtil.js"></script>
     <script src="/js/board/comment.js"></script>
     <script src="/js/board/boardDetail.js"></script>

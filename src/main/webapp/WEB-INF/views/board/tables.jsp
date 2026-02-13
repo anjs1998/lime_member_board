@@ -177,7 +177,8 @@
 
     <!-- Page level custom scripts -->
     <script src="/js/demo/datatables-demo.js"></script>
-    <!-- login.js for logout-->
+    <!-- ajax APIs and login.js for logout-->
+    <script src="/js/membership/ajax/signinApi.js"></script>
     <script src="/js/membership/login.js"></script>
   </body>
 </html>

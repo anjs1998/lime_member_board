@@ -202,7 +202,8 @@
 
     <!--script for phone format(반드시 signup.js 위에 와야함)-->
     <script src="/js/common/phone.js"></script>
-    <!--script for signup-->
+    <!-- APIs and script for signup-->
+    <script src="/js/membership/ajax/signupApi.js"></script>
     <script src="/js/membership/signup.js"></script>
 `   <!--script for daum address api-->
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>

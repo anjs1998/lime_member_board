@@ -1,3 +1,7 @@
+
+
+/*pagination에 해당하는 글 10개씩 서버에서 list 불러오기.
+@param : page -> cp (기본값 1)*/ 
 async function getWriteList(page = 1){
 
     try{
@@ -16,7 +20,8 @@ async function getWriteList(page = 1){
     
 
 }
-/*서버 측에서 게시글 불러오기 @param postid 
+/*서버 측에서 게시글 불러오기 
+@param postId 
 */ 
 async function getWriteDetail(postId){
 
@@ -42,12 +47,46 @@ async function getWriteDetail(postId){
             uploadFiles : files
         }
     });
-        /*
-        error: function(xhr){
-            console.log(xhr.responseText);
-            alert("서버 요청 실패 : 글을 불러오지 못했습니다.");
 
-        }*/
     return detail;
 }
 
+async function updatePost(formdata){
+    try{
+        const resp = await $.ajax({
+            url: "/board/modify", 
+            type: "POST",
+            data: formdata,
+            processData: false,
+            contentType: false,
+
+        });
+
+        return resp;
+    }catch(e){
+            console.log(e?.responseText ?? e);
+            return null; // 여기서 alert까지 하면 호출부에서 중복 alert 날 수 있음
+     }
+      
+}
+
+async function deletePost(postId){
+    try{
+        const resp = await $.ajax({
+                                    url: `/board/delete?postId=${postId}`, 
+                                    type: "POST",
+                                    
+                                    processData: false,
+                                    contentType: false,
+                                    })
+
+        
+
+        return resp;
+    }catch(e){
+            console.log(e?.responseText ?? e);
+            return null; // 여기서 alert까지 하면 호출부에서 중복 alert 날 수 있음
+     }
+
+
+}

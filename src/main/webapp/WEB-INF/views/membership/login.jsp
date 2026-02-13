@@ -102,6 +102,7 @@
 
     <!-- Custom scripts for all pages-->
     <script src="/js/sb-admin-2.min.js"></script>
+    <script src="/js/membership/ajax/signinApi.js"></script>
     <script src="/js/membership/login.js"></script>
   </body>
 </html>

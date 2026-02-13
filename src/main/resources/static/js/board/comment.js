@@ -11,6 +11,7 @@ async function loadComments(postId = getPostIdFromUrl()) {
   if (!postId) {
     console.error("postId가 없습니다.");
     return [];
+    
   }
 
   try {

@@ -81,7 +81,7 @@ function renderUploadFiles(files) {
 
 
 /*서버 측에서 게시글 불러오기 @param postid 
-*/ 
+*/ /*
 async function getWriteDetail(postId){
 
     const detail = $.ajax({
@@ -106,14 +106,9 @@ async function getWriteDetail(postId){
             uploadFiles : files
         }
     });
-        /*
-        error: function(xhr){
-            console.log(xhr.responseText);
-            alert("서버 요청 실패 : 글을 불러오지 못했습니다.");
 
-        }*/
     return detail;
-}
+}*/
 
 /**************************************************************** */
 
@@ -134,29 +129,22 @@ async function deletePostButtonHandler(){
     const postId = params.get("postId");
 
     if(confirm("정말로 삭제하시겠습니까?")){
-        $.ajax({
-        url: `/board/delete?postId=${postId}`, 
-        type: "POST",
-        
-        processData: false,
-        contentType: false,
-        success: function (resp) {
-            // 서버가 "1"/"0" 같은 텍스트를 준다고 가정
+        const resp = await deletePost(postId);
+        if(resp === null) {  
+            alert("게시글 삭제 오류.. 서버 요청 실패"); 
+            return;
+        }else{// 서버가 "1"/"0" 같은 텍스트를 준다고 가정
             const result = Number(resp);
 
             if (result > 0) {
-            alert("게시글 삭제 성공!");
-            location.href = "/"; // 메인으로
+                alert("게시글 삭제 성공!");
+                location.href = "/"; // 메인으로
+                return;
             } else {
-            alert("게시글 삭제 실패..");
+                alert("게시글 삭제 실패..");
+                return;
             }
-        },
-        error: function (xhr) {
-            console.log(xhr.responseText);
-            alert("게시글 삭제 오류.. 서버 요청 실패");
         }
-        });
-        return ;
 
     }
 }

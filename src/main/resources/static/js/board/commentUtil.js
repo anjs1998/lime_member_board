@@ -45,6 +45,7 @@ function bindCommentActionEvents() {
       editor.style.display = "block";
       contentDiv.style.display="none"; // contentDiv 숨기고 textarea를 show
       cancelBtn && (cancelBtn.style.display = "inline-block");
+      console.log("contentDiv : ",contentDiv);
       const content = contentDiv?.querySelector(".comment-text").innerText || "";
       textarea.value = content;
       //textarea.value = (contentDiv ? contentDiv.innerText : "");
@@ -77,10 +78,10 @@ function bindCommentActionEvents() {
         console.log("mode : " , mode);
         const newComment = await insertComment({
             
-          //postId: getPostIdFromUrl(),
+          postId: getPostIdFromUrl(),
           parentCommentId: commentId,
           content : content,
-        });
+      });
         if(newComment !== null){
           closeAllEditors();
           insertNewCommentAsync(newComment);
@@ -91,7 +92,7 @@ function bindCommentActionEvents() {
         console.log("mode : " , mode);
         const modifiedComment = await modifyComment(commentId, content);
         if(modifiedComment){
-          modifyCommentAsync(modifiedComment, commentItem, getParentNicknameFromId(commentItem.dataset.parentId));
+          modifyCommentAsync(modifiedComment, commentItem, getParentNicknameFromId(commentItem.dataset.parentCommentId));
           contentDiv.style.display="block"; // contentDiv 숨기고 textarea를 show
         }
       } else {
@@ -103,9 +104,9 @@ function bindCommentActionEvents() {
       closeAllEditors();
       //await reloadComments();
 
-      function getParentNicknameFromId(parentMemberId){
+      function getParentNicknameFromId(parentCommentId){
 
-        const parent = target.querySelector(`div.commentDiv[data-id="${parentMemberId}"]`);
+        const parent = document.querySelector(`div.commentDiv[data-id="${parentCommentId}"]`);
         if (!parent) return null;
 
         return parent.dataset.nickname;
@@ -139,8 +140,8 @@ function closeAllEditors() {
     btn.style.display = "none";
   });
 }
-
-/************댓글 CRUD용 ajax요청보내는 함수들.**************************************************************** */
+/**************************************************************************** */
+/*답글이 아닌 새 댓글 등록*/ 
 async function submitCommentHandler(event) {
   event.preventDefault(); // a 태그 / 버튼 기본 동작 막기
 
@@ -154,7 +155,29 @@ async function submitCommentHandler(event) {
     alert("댓글 내용을 입력해주세요.");
     return;
   }
+  const newComment = await insertComment({
+                                      postId :  getPostIdFromUrl(),
+                                      parentCommentId: null, // null을 넣으면 internal server error
+                                      content : content 
+                                  }) 
+    if(newComment === null)   {
+      alert("새 댓글 등록중 오류!"); 
+      return;
+    }else{
+      form.querySelector('textarea[name="content"]').value = "";
+      
+      // 필요하면 댓글 다시 로딩
+      // loadComments(postId);
 
+      //const {success ,newComment} = res;
+      if(newComment !== null){
+        insertNewCommentAsync(newComment);
+        return;
+      }s
+    }                                
+                                  
+                                  
+                                  /*
   $.ajax({
     url: "/comment/insert",
     type: "POST",
@@ -177,128 +200,25 @@ async function submitCommentHandler(event) {
       
       
       
-      async function loadComments(postId = getPostIdFromUrl()) {
-        if (!postId) {
-          console.error("postId가 없습니다.");
-          return [];
-        }
 
-        try {
-          const commentList = await $.ajax({
-            url: "/comments",
-            type: "GET",
-            dataType: "json",
-            data: { postId }
-          });
-
-          //return Array.isArray(commentList) ? commentList : [];
-          return commentList.comments;
-        } catch (err) {
-          console.error("댓글 조회 실패:", err);
-          return [];
-        }
-}
       console.log("댓글 등록 성공", res);
     },
     error: function (err) {
       console.error("댓글 등록 실패", err);
       alert("댓글 등록 중 오류가 발생했습니다.");
     }
-  });
-}
-// 댓글 등록
-async function insertComment({ parentCommentId = 0, content }) {
-
-  const payload = {
-    postId: Number(getPostIdFromUrl()),
-    parentCommentId,
-    commentContent: content
-  };
-
-  try {
-    const resp = await $.ajax({
-      url: "/comment/insert",
-      type: "POST",
-      contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      data: JSON.stringify(payload),
-    });
-
-    // 👉 성공했을 때 Comment DTO만 반환
-    if (resp.success === true) {
-      return resp.newComment; // ★ 여기!
-    }
-
-    // 실패 응답
-    console.error(resp.message);
-    return null;
-
-  } catch (err) {
-    console.error("댓글 등록 중 오류:", err);
-    return null;
-  }
+  })*/;
 }
 
-// 댓글 수정
-async function modifyComment(commentId, content) {
 
-  const payload = {
-    commentContent: content
-  };
 
-  try {
-    const resp = await $.ajax({
-      url: `/comment/modify?commentId=${commentId}`,
-      type: "POST",
-      contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      data: JSON.stringify(payload),
-    });
-
-    // 👉 성공 시: 수정된 Comment DTO만 반환
-    if (resp.success === true) {
-      return resp.newComment;   // ★ insert와 완전히 동일한 패턴
-    }
-
-    console.error(resp.message);
-    return null;
-
-  } catch (err) {
-    console.error("댓글 수정 중 오류:", err);
-    return null;
-  }
-}
-
-// 댓글 삭제
-async function deleteComment(commentId) {
-
-  try {
-    const resp = await $.ajax({
-      url: `/comment/delete?commentId=${commentId}`,
-      type: "POST",
-      dataType: "json",
-    });
-
-    // 👉 성공 시 true 반환
-    if (resp.success === true) {
-      return true;
-    }
-
-    console.error(resp.message);
-    return false;
-
-  } catch (err) {
-    console.error("댓글 삭제 중 오류:", err);
-    return false;
-  }
-}
 /************************************************************************************************ */
 // postId를 URL에서 꺼내오는 유틸 (필요하면 사용)
 function getPostIdFromUrl() {
   const params = new URLSearchParams(window.location.search);
   return params.get("postId");
 }
-
+/*********************************************************************************************** */
 /*비동기로 댓글 삽입 결과를 보여주는 함수.*/ 
 function insertNewCommentAsync(commentDto) {
   if (!commentDto) return;
@@ -422,8 +342,12 @@ function insertNewCommentAsync(commentDto) {
 
         <div class="comment">
           <p>
-            ${parentId ? "@" + parentDiv.dataset.nickname : ""}
-            ${escapeHtml(content)}
+            ${
+              parentId
+                ? `<span class="reply-target">@${escapeHtml(parentDiv.dataset.nickname)}</span> `
+                : ""
+            }
+            <span class="comment-text">${escapeHtml(content)}</span>
           </p>
         </div>
 
@@ -472,7 +396,7 @@ function modifyCommentAsync(commentDto, commentDiv, parentNickname) {
   const { parentCommentId, commentContent } = commentDto;
 
   const p = commentDiv.querySelector("div.comment > p");
-  if (!p) return;
+  if (!p) {console.log("p:", p); return};
 
   // @닉네임 + 내용 구성
   const mention = parentCommentId ? `@${parentNickname ?? ""} ` : "";
@@ -494,10 +418,12 @@ p.innerHTML = `
 */ 
 function deleteCommentAsync(commentDiv){
   if(!commentDiv) return;
+  const commentHead1 = commentDiv.querySelector(".commentHead1");
   const commentHead2 = commentDiv.querySelector(".commentHead2");
   const commentBody = commentDiv.querySelector(".comment");
   const commentEditor = commentDiv.querySelector(".commentEditor");
   
+  commentHead1.innerHTML = "";
   commentHead2.innerHTML = "";
   commentBody.innerHTML = `<p style="font-style: italic; color: gray;">
           댓글이 삭제되었습니다.
